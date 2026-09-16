@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Наш 6-Часовой Маршрут ✨</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <title>Дорожное Приключение 🚗✨</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
         body {
@@ -15,11 +14,10 @@
             justify-content: center;
             align-items: center;
             padding: 15px;
-            overflow-x: hidden;
         }
         .card {
             background: rgba(255, 255, 255, 0.96);
-            padding: 25px 20px;
+            padding: 22px 18px;
             border-radius: 24px;
             box-shadow: 0 15px 35px rgba(255, 75, 114, 0.2);
             text-align: center;
@@ -27,7 +25,7 @@
             width: 100%;
             position: relative;
         }
-        h1, h2 { color: #ff3366; margin-bottom: 12px; font-size: 20px; }
+        h2 { color: #ff3366; margin-bottom: 10px; font-size: 20px; }
         p { color: #555; font-size: 14px; line-height: 1.4; margin-bottom: 15px; }
         
         button.btn-main {
@@ -41,6 +39,7 @@
             cursor: pointer;
             box-shadow: 0 5px 15px rgba(255, 51, 102, 0.4);
             margin-top: 10px;
+            width: 100%;
         }
 
         .screen { display: none; }
@@ -53,11 +52,10 @@
             padding: 12px;
             border-radius: 16px;
             font-weight: bold;
-            font-size: 16px;
-            margin: 15px 0;
+            font-size: 15px;
+            margin: 12px 0;
         }
 
-        /* Викторина */
         .option-btn {
             display: block;
             width: 100%;
@@ -69,55 +67,52 @@
             color: #ff3366;
             font-weight: bold;
             font-size: 14px;
-            cursor: pointer;
         }
-        .option-btn.wrong { background: #ffe6e6; border-color: #ff4757; color: #ff4757; }
 
-        /* Таймер */
-        .timer-box {
-            background: #fff0f3;
-            border: 2px dashed #ff3366;
+        .car-game {
+            background: #f8f9fa;
+            border: 2px solid #ff3366;
+            border-radius: 18px;
             padding: 15px;
-            border-radius: 20px;
-            font-size: 32px;
+            margin: 10px 0;
+        }
+        .score-box {
+            font-size: 26px;
             font-weight: bold;
             color: #ff3366;
-            margin: 15px 0;
+            margin: 10px 0;
+        }
+        .number-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .num-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ffb3c1;
+            border-radius: 12px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
         }
 
-        /* Игра Drag & Drop */
-        .game-board {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 15px;
-            min-height: 140px;
+        /* Автономное конфетти */
+        .confetti-piece {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            border-radius: 2px;
+            animation: fall 3s linear forwards;
+            z-index: 999;
         }
-        .zone {
-            width: 48%;
-            background: #fff0f3;
-            border: 2px dashed #ffb3c1;
-            border-radius: 15px;
-            padding: 10px;
-            min-height: 120px;
-        }
-        .zone h4 { font-size: 12px; color: #ff3366; margin-bottom: 8px; }
-        .items-floating {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 15px;
-        }
-        .drag-item {
-            background: white;
-            border: 1px solid #ff3366;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            color: #333;
-            cursor: grab;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -126,75 +121,65 @@
 <body>
 
     <div class="card">
-        <!-- Сцена 1: Старт -->
+        <!-- Сцена 1 -->
         <div id="screen1" class="screen active">
-            <h2>Наше 6-часовое приключение! ⏳✨</h2>
-            <p>У нас есть целых 6 часов, чтобы создать лучшие воспоминания! Проходи квесты на сайте, чтобы узнавать каждую следующую точку нашего маршрута.</p>
-            <button class="btn-main" onclick="goToScreen(2)">Открыть точку №1 🗺️</button>
+            <h2>Дорожный Квест: Балхаш ➔ Алматы 🚗💨</h2>
+            <p>Чтобы дорога пролетела незаметно, запускаем нашу романтическую игру прямо в машине!</p>
+            <button class="btn-main" onclick="goToScreen(2)">Играть в авто-номера 🚘</button>
         </div>
 
-        <!-- Сцена 2: Квест 1 (Воспоминания) -->
+        <!-- Сцена 2 -->
         <div id="screen2" class="screen">
-            <h2>Точка 1: Проверка Памяти 🗺️</h2>
-            <p id="quizQuestion">Где прошло наше самое первое свидание?</p>
+            <h2>Охота за номерами 🚔</h2>
+            <p>Замечай номера встречных машин! Вводи первые 3 цифры (например, 463 от 463BOT02).</p>
+            
+            <div class="car-game">
+                <div>Текущая сумма:</div>
+                <div class="score-box" id="currentScore">0 / 5000</div>
+                <div class="number-input-group">
+                    <input type="number" id="carNumInput" class="num-input" placeholder="Напр. 463" min="0" max="999">
+                    <button class="btn-main" style="margin:0; width: auto; padding: 10px 18px;" onclick="addCarNumber()">+</button>
+                </div>
+                <p style="font-size:12px; color:#888;">Цель: Набрать 5000 очков вместе!</p>
+            </div>
+            <button class="btn-main" id="toQuizBtn" style="display:none;" onclick="goToScreen(3)">Ура! К викторине 🎉</button>
+        </div>
+
+        <!-- Сцена 3 -->
+        <div id="screen3" class="screen">
+            <h2>Вопрос на миллион 💖</h2>
+            <p id="quizQuestion">Загрузка вопроса...</p>
             <div id="quizOptions"></div>
         </div>
 
-        <!-- Сцена 3: Локация 1 (Нават) -->
-        <div id="screen3" class="screen">
-            <h2>Первая локация разблокирована! 🍽️</h2>
-            <div class="location-badge">📍 Ресторан «Нават»</div>
-            <p>Первым делом мы отправляемся вкусно покушать и набраться сил!</p>
-            <button class="btn-main" onclick="goToScreen(4)">Мы уже в Навате! ⏳</button>
-        </div>
-
-        <!-- Сцена 4: Таймер Цветы -->
+        <!-- Сцена 4 -->
         <div id="screen4" class="screen">
-            <h2>Точка 2: Тайный Сюрприз ✨</h2>
-            <p style="font-style: italic; color: #777;">«Каждому нужно так или иначе ждать, но если дождаться — можно получить особенную награду...»</p>
-            <div class="timer-box" id="flowerTimer">40:00</div>
-            <p id="timerSubtext">Наслаждайся едой и жди обнуления отсчёта! ❤️</p>
-            <button id="nextAfterTimerBtn" class="btn-main" style="display:none;" onclick="goToScreen(5)">Открыть точку №3 🎬</button>
+            <h2>Приехали в Алматы! 🎡</h2>
+            <div class="location-badge">📍 Парк Аттракционов</div>
+            <p>Время веселья, колеса обозрения и маленького нежного сюрприза 💐</p>
+            <button class="btn-main" onclick="goToScreen(5)">Дальше: VIP SPA от меня 💆‍♀️</button>
         </div>
 
-        <!-- Сцена 5: Локация 3 (ТЦ / Кино) -->
+        <!-- Сцена 5 -->
         <div id="screen5" class="screen">
-            <h2>Точка 3: Развлечения & Фото 📸</h2>
-            <div class="location-badge">📍 ТЦ / Кино / Фотобудка</div>
-            <p>Время веселья! Сделаем памятные фото в фотобудке и заглянем в кино!</p>
-            <button class="btn-main" onclick="goToScreen(6)">Дальше в Парк 🌳</button>
+            <h2>Персональный SPA-Салон 💆‍♀️✨</h2>
+            <div class="location-badge">📍 Массаж & Полный Релакс</div>
+            <p>После долгой дороги из Балхаша твои ножки заслужили 100% отдых. Мастер готовит масло!</p>
+            <button class="btn-main" onclick="goToScreen(6)">Едем смотреть закат 🌅</button>
         </div>
 
-        <!-- Сцена 6: Игра Drag & Drop -->
+        <!-- Сцена 6 -->
         <div id="screen6" class="screen">
-            <h2>Точка 4: Наш Мир 🧩</h2>
-            <p>Распредели вещи по зонам на память перед поездкой!</p>
-            
-            <div class="items-floating" id="itemsContainer">
-                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item1">Великобритания 🇬🇧</div>
-                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item2">Кофе ☕</div>
-                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item3">Капчагай 🌊</div>
-                <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item4">Обнимашки 🧸</div>
-            </div>
-
-            <div class="game-board">
-                <div class="zone" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <h4>Твоя Зона 👸</h4>
-                </div>
-                <div class="zone" ondrop="drop(event)" ondragover="allowDrop(event)">
-                    <h4>Моя Зона 🤴</h4>
-                </div>
-            </div>
-
-            <button class="btn-main" style="margin-top:20px;" onclick="goToScreen(7)">Финал 🌅</button>
+            <h2>Пикник на Закате 🌅🥤</h2>
+            <div class="location-badge">📍 Смотровая площадка</div>
+            <p>Смотрим, как солнце заходит за горы, пьём сок и наслаждаемся последними минутами дня!</p>
+            <button class="btn-main" onclick="goToScreen(7)">Финиш (Едем в аэропорт) ✈️</button>
         </div>
 
-        <!-- Сцена 7: Финал -->
+        <!-- Сцена 7 -->
         <div id="screen7" class="screen">
             <h2>Ты самое лучшее, что со мной было! ❤️</h2>
-            <div class="location-badge">📍 Панорамный вид & Кофе</div>
-            <p>🇬🇧 Великобритания ждёт тебя, но помни — я всегда рядом, на каком бы континенте ты ни была.</p>
-            <p style="font-size: 12px; color: #888;">Нажми на кнопку ниже, когда будешь скучать!</p>
+            <p>Впереди UK 🇬🇧, но этот день навсегда с нами. Поехали встречаться с мамой!</p>
             <button class="btn-main" onclick="finishQuest()">Я тебя люблю! 💕</button>
         </div>
     </div>
@@ -203,14 +188,29 @@
         function goToScreen(num) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen' + num).classList.add('active');
-            if (num === 4) startTimer();
         }
 
-        // Викторина
+        let score = 0;
+        const targetScore = 5000;
+
+        function addCarNumber() {
+            const input = document.getElementById('carNumInput');
+            const val = parseInt(input.value);
+            if (!isNaN(val) && val >= 0 && val <= 999) {
+                score += val;
+                document.getElementById('currentScore').innerText = score + " / " + targetScore;
+                input.value = '';
+                if (score >= targetScore) {
+                    document.getElementById('toQuizBtn').style.display = 'block';
+                    triggerConfetti();
+                }
+            }
+        }
+
         const questions = [
-            { q: "Где прошло наше самое первое свидание?", opts: ["Алматы", "Капчагай", "Астана"], ans: 1 },
-            { q: "Где мы чаще всего виделись?", opts: ["В парке", "В машине/кафе", "В кино"], ans: 1 },
-            { q: "На чём мы ехали?", opts: ["Автомобиль", "Поезд", "Автобус"], ans: 0 }
+            { q: "Кто первый признался в чувствах?", opts: ["Ты", "Я", "Это было взаимно!"], ans: 1 },
+            { q: "Что мы обязательно сделаем, когда ты прилетишь из UK?", opts: ["Обнимемся на 10 минут", "Поедем на море", "Всё сразу!"], ans: 2 },
+            { q: "Какое наше главное правило?", opts: ["Никогда не грустить", "Всегда поддерживать друг друга", "Всегда кушать вместе"], ans: 1 }
         ];
         let currentQ = 0;
 
@@ -224,16 +224,11 @@
                 btn.className = 'option-btn';
                 btn.innerText = opt;
                 btn.onclick = () => {
-                    if (idx === q.ans) {
-                        currentQ++;
-                        if (currentQ < questions.length) {
-                            renderQuiz();
-                        } else {
-                            goToScreen(3);
-                        }
+                    currentQ++;
+                    if (currentQ < questions.length) {
+                        renderQuiz();
                     } else {
-                        btn.classList.add('wrong');
-                        btn.innerText = "Попробуй ещё раз! 😉";
+                        goToScreen(4);
                     }
                 };
                 container.appendChild(btn);
@@ -241,37 +236,21 @@
         }
         renderQuiz();
 
-        // Таймер 40 минут для цветов
-        function startTimer() {
-            let totalSeconds = 40 * 60;
-            const timerEl = document.getElementById('flowerTimer');
-            const interval = setInterval(() => {
-                let m = Math.floor(totalSeconds / 60);
-                let s = totalSeconds % 60;
-                timerEl.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-                
-                if (totalSeconds <= 0) {
-                    clearInterval(interval);
-                    timerEl.innerText = "Время пришло! 💐";
-                    document.getElementById('timerSubtext').innerText = "Оглянись вокруг или жди сюрприз!";
-                    document.getElementById('nextAfterTimerBtn').style.display = 'inline-block';
-                    confetti({ particleCount: 150, spread: 80 });
-                }
-                totalSeconds--;
-            }, 1000);
-        }
-
-        // Drag and Drop
-        function allowDrop(ev) { ev.preventDefault(); }
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
-        function drop(ev) {
-            ev.preventDefault();
-            var data = ev.dataTransfer.getData("text");
-            ev.target.closest('.zone').appendChild(document.getElementById(data));
+        function triggerConfetti() {
+            const colors = ['#ff3366', '#ffb3c1', '#ffd166', '#06d6a0', '#118ab2'];
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti-piece';
+                p.style.left = Math.random() * 100 + 'vw';
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                p.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 3000);
+            }
         }
 
         function finishQuest() {
-            confetti({ particleCount: 250, spread: 100 });
+            triggerConfetti();
         }
     </script>
 </body>
