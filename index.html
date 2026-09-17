@@ -28,7 +28,7 @@
         
         /* Панель быстрой навигации */
         .nav-bar {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             background: #fff0f3;
             padding: 8px 12px;
             border-radius: 12px;
@@ -46,6 +46,29 @@
             border-radius: 8px;
             font-size: 12px;
             outline: none;
+        }
+
+        /* Прогресс-бар с машинкой */
+        .road-progress {
+            background: #eee;
+            border-radius: 10px;
+            height: 14px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+        .road-bar {
+            background: linear-gradient(90deg, #ff9a9e, #ff3366);
+            height: 100%;
+            width: 11%;
+            transition: width 0.4s ease;
+        }
+        .car-icon {
+            position: absolute;
+            top: -3px;
+            font-size: 14px;
+            transition: left 0.4s ease;
         }
 
         h2 { color: #ff3366; margin-bottom: 10px; font-size: 20px; }
@@ -100,17 +123,8 @@
             padding: 15px;
             margin: 10px 0;
         }
-        .score-box {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff3366;
-            margin: 8px 0;
-        }
-        .number-input-group {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
+        .score-box { font-size: 24px; font-weight: bold; color: #ff3366; margin: 8px 0; }
+        .number-input-group { display: flex; gap: 8px; margin-bottom: 10px; }
         .num-input {
             width: 100%;
             padding: 10px;
@@ -130,16 +144,8 @@
             padding: 5px;
             background: #fff;
             border-radius: 10px;
-            border: 1px inline #eee;
         }
-        .tag {
-            background: #ffecf0;
-            color: #ff3366;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-        }
+        .tag { background: #ffecf0; color: #ff3366; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
 
         /* Таймер */
         .timer-box {
@@ -182,12 +188,7 @@
             100% { transform: translateY(-8px) rotate(3deg); }
         }
 
-        .game-board {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-top: 15px;
-        }
+        .game-board { display: flex; justify-content: space-between; gap: 10px; margin-top: 15px; }
         .zone {
             width: 48%;
             background: #fff0f3;
@@ -197,6 +198,32 @@
             min-height: 110px;
         }
         .zone h4 { font-size: 12px; color: #ff3366; margin-bottom: 8px; }
+
+        /* Колесо Фортуны */
+        .wheel-box {
+            background: #fff0f3;
+            border: 2px dashed #ff3366;
+            border-radius: 20px;
+            padding: 15px;
+            margin: 15px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff3366;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Открытка */
+        .secret-envelope {
+            background: #fff0f3;
+            border: 2px dashed #ff3366;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 15px 0;
+            cursor: pointer;
+        }
 
         /* Конфетти */
         .confetti-piece {
@@ -215,7 +242,7 @@
 <body>
 
     <div class="card">
-        <!-- Выбор этапа -->
+        <!-- Навигация -->
         <div class="nav-bar">
             <label for="stageSelect">Этап:</label>
             <select id="stageSelect" onchange="jumpToStage(this.value)">
@@ -223,26 +250,33 @@
                 <option value="2">2. Номера 🚘</option>
                 <option value="3">3. Викторина 💖</option>
                 <option value="4">4. Обед & Цветы 💐</option>
-                <option value="5">5. Аттракционы 🎡</option>
-                <option value="6">6. Мечты 🧩</option>
-                <option value="7">7. SPA 💆‍♀️</option>
-                <option value="8">8. Закат 🌅</option>
-                <option value="9">9. Финал ✈️</option>
+                <option value="5">5. Фото-челлендж 📸</option>
+                <option value="6">6. Аттракционы 🎡</option>
+                <option value="7">7. Рулетка Желаний 🎰</option>
+                <option value="8">8. Мечты 🧩</option>
+                <option value="9">9. SPA 💆‍♀️</option>
+                <option value="10">10. Закат 🌅</option>
+                <option value="11">11. Письмо & Финал ✉️</option>
             </select>
         </div>
 
-        <!-- Сцена 1 -->
-        <div id="screen1" class="screen active">
-            <h2>Дорожный Квест: Балхаш ➔ Алматы 🚗💨</h2>
-            <p>Чтобы дорога пролетела незаметно, запускаем нашу романтическую игру прямо в машине!</p>
-            <button class="btn-main" onclick="goToScreen(2)">Играть в авто-номера 🚘</button>
+        <!-- Дорожный Прогресс -->
+        <div class="road-progress">
+            <div class="road-bar" id="roadBar"></div>
+            <div class="car-icon" id="carIcon" style="left: 5%;">🚗</div>
         </div>
 
-        <!-- Сцена 2 -->
+        <!-- Сцена 1: Старт -->
+        <div id="screen1" class="screen active">
+            <h2>Дорожный Квест 🚗💨</h2>
+            <p>Балхаш ➔ Алматы! Готова к романтическому путешествию?</p>
+            <button class="btn-main" onclick="goToScreen(2)">Поехали! 🚀</button>
+        </div>
+
+        <!-- Сцена 2: Номера -->
         <div id="screen2" class="screen">
             <h2>Охота за номерами 🚔</h2>
-            <p>Вводи 3 цифры номера встречной машины. Повторять уже введённые номера нельзя!</p>
-            
+            <p>Вводи 3 цифры номера встречной машины. Без повторов!</p>
             <div class="car-game">
                 <div>Сумма очков:</div>
                 <div class="score-box" id="currentScore">0 / 3000</div>
@@ -256,38 +290,52 @@
             <button class="btn-main" id="toQuizBtn" style="display:none;" onclick="goToScreen(3)">Дальше к викторине 🎉</button>
         </div>
 
-        <!-- Сцена 3 -->
+        <!-- Сцена 3: Викторина -->
         <div id="screen3" class="screen">
             <h2>Вопросы про нас 💖</h2>
             <p id="quizQuestion">Загрузка вопроса...</p>
             <div id="quizOptions"></div>
         </div>
 
-        <!-- Сцена 4 -->
+        <!-- Сцена 4: Обед & Таймер -->
         <div id="screen4" class="screen">
             <h2>Перекус & Маленькая пауза ☕💐</h2>
             <p style="font-style: italic; color: #777;">«Отдыхаем и ждём нежного момента...»</p>
             <div class="timer-box" id="flowerTimer">15:00</div>
             <p id="timerSubtext">Пока готовится еда — время общаться! ❤️</p>
-            
             <button onclick="skipTimerForTest()" style="background:none; border:none; color:#bbb; font-size:10px; margin-top:5px; cursor:pointer;">[Пропустить таймер]</button>
-            
-            <button id="nextAfterTimerBtn" class="btn-main" style="display:none; margin-top:10px;" onclick="goToScreen(5)">Едем на Аттракционы 🎡</button>
+            <button id="nextAfterTimerBtn" class="btn-main" style="display:none; margin-top:10px;" onclick="goToScreen(5)">Дальше к Челленджу 📸</button>
         </div>
 
-        <!-- Сцена 5 -->
+        <!-- Сцена 5: Фото-челлендж -->
         <div id="screen5" class="screen">
-            <h2>Парк Аттракционов 🎡</h2>
-            <div class="location-badge">📍 Колесо обозрения & Прогулка</div>
-            <p>Катаемся, делаем фото и наслаждаемся атмосферой!</p>
-            <button class="btn-main" onclick="goToScreen(6)">Дальше: Игра в мечты 🧩</button>
+            <h2>Дорожный Фото-Челлендж 📸</h2>
+            <div class="location-badge">📍 Остановка на заправке / кафе</div>
+            <p>Миссия: Сделайте самое милое или смешное совместное селфи прямо сейчас!</p>
+            <button class="btn-main" onclick="triggerConfetti(); goToScreen(6);">Сфоткались! 📸✨</button>
         </div>
 
-        <!-- Сцена 6 -->
+        <!-- Сцена 6: Аттракционы -->
         <div id="screen6" class="screen">
+            <h2>Парк Аттракционов 🎡</h2>
+            <div class="location-badge">📍 Колесо обозрения</div>
+            <p>Катаемся, гуляем и наслаждаемся видом Алматы!</p>
+            <button class="btn-main" onclick="goToScreen(7)">Дальше: Секретная Рулетка 🎰</button>
+        </div>
+
+        <!-- Сцена 7: Рулетка Желаний -->
+        <div id="screen7" class="screen">
+            <h2>Колесо Секретных Желаний 🎰✨</h2>
+            <p>Нажми кнопку и выбей бонус на сегодняшний вечер!</p>
+            <div class="wheel-box" id="wheelResult">???</div>
+            <button class="btn-main" id="spinBtn" onclick="spinWheel()">Крутить Рулетку! 🎡</button>
+            <button class="btn-main" id="toDreamsBtn" style="display:none; margin-top:10px;" onclick="goToScreen(8)">Дальше к Мечтам 🧩</button>
+        </div>
+
+        <!-- Сцена 8: Перетаскивание -->
+        <div id="screen8" class="screen">
             <h2>Распредели Мечты 🧩✨</h2>
             <p>Перетащи плавающие элементы в нужные зоны!</p>
-            
             <div class="items-floating" id="itemsContainer">
                 <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item1">Великобритания 🇬🇧</div>
                 <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item2">Массаж 💆‍♀️</div>
@@ -295,7 +343,6 @@
                 <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item4">Обнимашки 🧸</div>
                 <div class="drag-item" draggable="true" ondragstart="drag(event)" id="item5">Вкусняшки 🍩</div>
             </div>
-
             <div class="game-board">
                 <div class="zone" ondrop="drop(event)" ondragover="allowDrop(event)">
                     <h4>Твоя Зона 👸</h4>
@@ -304,47 +351,57 @@
                     <h4>Моя Зона 🤴</h4>
                 </div>
             </div>
-
-            <button class="btn-main" style="margin-top:15px;" onclick="goToScreen(7)">Перейти к СПА 💆‍♀️</button>
+            <button class="btn-main" style="margin-top:15px;" onclick="goToScreen(9)">Перейти к СПА 💆‍♀️</button>
         </div>
 
-        <!-- Сцена 7 -->
-        <div id="screen7" class="screen">
+        <!-- Сцена 9: SPA -->
+        <div id="screen9" class="screen">
             <h2>Персональный SPA-Салон 💆‍♀️✨</h2>
-            <div class="location-badge">📍 Массаж & Полный Релакс</div>
-            <p>После дороги ножки и спина заслужили 100% отдых. Ложись и расслабляйся — мастер готов!</p>
-            <button class="btn-main" onclick="goToScreen(8)">Едем смотреть закат 🌅</button>
+            <div class="location-badge">📍 Массаж & Релакс</div>
+            <p>После дороги ножки и спина заслужили 100% отдых. Ложись и расслабляйся — мастер готовит масло!</p>
+            <button class="btn-main" onclick="goToScreen(10)">Едем смотреть закат 🌅</button>
         </div>
 
-        <!-- Сцена 8 -->
-        <div id="screen8" class="screen">
+        <!-- Сцена 10: Закат -->
+        <div id="screen10" class="screen">
             <h2>Пикник на Закате 🌅🥤</h2>
             <div class="location-badge">📍 Смотровая площадка</div>
-            <p>Смотрим, как солнце заходит за горы, пьём сок и наслаждаемся лучшими минутами дня!</p>
-            <button class="btn-main" onclick="goToScreen(9)">Финиш ✈️</button>
+            <p>Смотрим на закат над горами и наслаждаемся этим моментом!</p>
+            <button class="btn-main" onclick="goToScreen(11)">Открыть Тайное Письмо ✉️</button>
         </div>
 
-        <!-- Сцена 9 -->
-        <div id="screen9" class="screen">
-            <h2>Ты самое лучшее, что со мной было! ❤️</h2>
-            <p>Впереди UK 🇬🇧, но этот день навсегда с нами. Поехали встречаться с мамой!</p>
-            <button class="btn-main" onclick="finishQuest()">Я тебя люблю! 💕</button>
+        <!-- Сцена 11: Финал & Письмо -->
+        <div id="screen11" class="screen">
+            <h2>Тайное Письмо ✉️💖</h2>
+            <div class="secret-envelope" id="envelope" onclick="openEnvelope()">
+                💌 Нажми, чтобы открыть конверт...
+            </div>
+            <div id="letterText" style="display:none; margin: 15px 0; font-size: 14px; color: #444; line-height: 1.5;">
+                «Ты самое лучшее, что есть в моей жизни. Впереди UK 🇬🇧, но этот день и эти воспоминания всегда с нами! Я тебя очень люблю!»
+            </div>
+            <button class="btn-main" id="finalBtn" style="display:none;" onclick="finishQuest()">Я тебя люблю! 💕</button>
         </div>
     </div>
 
     <script>
+        const totalStages = 11;
+
         function goToScreen(num) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById('screen' + num).classList.add('active');
             document.getElementById('stageSelect').value = num;
+            
+            // Обновляем шкалу машинки
+            let percent = (num / totalStages) * 100;
+            document.getElementById('roadBar').style.width = percent + '%';
+            document.getElementById('carIcon').style.left = (percent - 8) + '%';
+
             if (parseInt(num) === 4) startTimer();
         }
 
-        function jumpToStage(num) {
-            goToScreen(num);
-        }
+        function jumpToStage(num) { goToScreen(num); }
 
-        // 1. Игра с номерами машин (без дубликатов + с историей)
+        // 1. Номера
         let score = 0;
         const targetScore = 3000;
         const usedNumbers = new Set();
@@ -352,28 +409,17 @@
         function addCarNumber() {
             const input = document.getElementById('carNumInput');
             const val = parseInt(input.value);
-            
-            if (isNaN(val) || val < 0 || val > 999) {
-                alert("Введи 3-значное число!");
-                return;
-            }
-
-            if (usedNumbers.has(val)) {
-                alert(`Номер ${val} уже был введён! Поищи другой 😉`);
-                input.value = '';
-                return;
-            }
+            if (isNaN(val) || val < 0 || val > 999) { alert("Введи 3 цифры!"); return; }
+            if (usedNumbers.has(val)) { alert(`Номер ${val} уже был!`); input.value = ''; return; }
 
             usedNumbers.add(val);
             score += val;
             document.getElementById('currentScore').innerText = score + " / " + targetScore;
             
-            // Добавляем тег истории
             const tag = document.createElement('span');
             tag.className = 'tag';
             tag.innerText = val;
             document.getElementById('historyTags').prepend(tag);
-
             input.value = '';
 
             if (score >= targetScore) {
@@ -382,18 +428,14 @@
             }
         }
 
-        // 2. Таймер (15 минут)
-        let timerInterval;
-        let totalSeconds = 15 * 60;
-
+        // 2. Таймер
+        let timerInterval, totalSeconds = 15 * 60;
         function startTimer() {
             const timerEl = document.getElementById('flowerTimer');
             clearInterval(timerInterval);
             timerInterval = setInterval(() => {
-                let m = Math.floor(totalSeconds / 60);
-                let s = totalSeconds % 60;
+                let m = Math.floor(totalSeconds / 60), s = totalSeconds % 60;
                 timerEl.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-                
                 if (totalSeconds <= 0) {
                     clearInterval(timerInterval);
                     timerEl.innerText = "Время пришло! 💐";
@@ -404,55 +446,74 @@
                 totalSeconds--;
             }, 1000);
         }
+        function skipTimerForTest() { totalSeconds = 2; }
 
-        function skipTimerForTest() {
-            totalSeconds = 2;
+        // 3. Рулетка Желаний
+        const prizes = [
+            "🎁 Исполнение 1 любого желания!",
+            "💆‍♂️ Дополнительные 10 мин массажа!",
+            "🍦 Любое мороженое/сладость на выбор!",
+            "👑 Статус «Принцесса дня» на 24 часа!"
+        ];
+        function spinWheel() {
+            const res = document.getElementById('wheelResult');
+            res.innerText = "Крутим...";
+            document.getElementById('spinBtn').disabled = true;
+            setTimeout(() => {
+                const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
+                res.innerText = randomPrize;
+                triggerConfetti();
+                document.getElementById('toDreamsBtn').style.display = 'block';
+            }, 1500);
         }
 
-        // 3. Перетаскивание
+        // 4. Drag & Drop
         function allowDrop(ev) { ev.preventDefault(); }
         function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
         function drop(ev) {
             ev.preventDefault();
             var data = ev.dataTransfer.getData("text");
             const item = document.getElementById(data);
-            item.style.animation = 'none'; // останавливаем покачивание при дропе
+            item.style.animation = 'none';
             ev.target.closest('.zone').appendChild(item);
         }
 
-        // 4. Викторина
+        // 5. Викторина
         const questions = [
             { q: "Кто первый признался в чувствах?", opts: ["Ты", "Я", "Это было взаимно!"], ans: 1 },
             { q: "Наше главное правило перед отъездом?", opts: ["Всегда быть на связи", "Чаще улыбаться", "Не скучать"], ans: 0 }
         ];
         let currentQ = 0;
-
         function renderQuiz() {
             const q = questions[currentQ];
             document.getElementById('quizQuestion').innerText = q.q;
             const container = document.getElementById('quizOptions');
             container.innerHTML = '';
-            q.opts.forEach((opt, idx) => {
+            q.opts.forEach((opt) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.innerText = opt;
                 btn.onclick = () => {
                     currentQ++;
-                    if (currentQ < questions.length) {
-                        renderQuiz();
-                    } else {
-                        goToScreen(4);
-                    }
+                    if (currentQ < questions.length) renderQuiz();
+                    else goToScreen(4);
                 };
                 container.appendChild(btn);
             });
         }
         renderQuiz();
 
-        // 5. Конфетти
+        // 6. Конверт
+        function openEnvelope() {
+            document.getElementById('envelope').style.display = 'none';
+            document.getElementById('letterText').style.display = 'block';
+            document.getElementById('finalBtn').style.display = 'block';
+            triggerConfetti();
+        }
+
         function triggerConfetti() {
             const colors = ['#ff3366', '#ffb3c1', '#ffd166', '#06d6a0', '#118ab2'];
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 35; i++) {
                 const p = document.createElement('div');
                 p.className = 'confetti-piece';
                 p.style.left = Math.random() * 100 + 'vw';
@@ -463,9 +524,7 @@
             }
         }
 
-        function finishQuest() {
-            triggerConfetti();
-        }
+        function finishQuest() { triggerConfetti(); }
     </script>
 </body>
 </html>
