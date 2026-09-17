@@ -290,11 +290,11 @@
 
         <!-- 2. Номера 10000 -->
         <div id="screen2" class="screen">
-            <h2>Охота за номерами (10 000 очков) 🚘</h2>
-            <p>Набираем 10 000 очков по встречным машинам! Повторять номера нельзя.</p>
+            <h2>Охота за номерами (50 000 очков) 🚘</h2>
+            <p>Набираем 50 000 очков по встречным машинам! Повторять номера нельзя.</p>
             <div class="car-game">
                 <div>Сумма:</div>
-                <div class="score-box" id="currentScore">0 / 10000</div>
+                <div class="score-box" id="currentScore">0 / 50000</div>
                 <div class="number-input-group">
                     <input type="number" id="carNumInput" class="num-input" placeholder="Напр. 463" min="0" max="999">
                     <button class="btn-main" style="margin:0; width: auto; padding: 10px 18px;" onclick="addCarNumber()">+</button>
@@ -431,7 +431,7 @@
 
         // 1. Игра с номерами (10 000)
         let score = 0;
-        const targetScore = 10000;
+        const targetScore = 50000;
         const usedNumbers = new Set();
 
         function addCarNumber() {
