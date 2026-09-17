@@ -85,6 +85,11 @@
             margin-top: 10px;
             width: 100%;
         }
+        button.btn-main:disabled {
+            background-color: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
 
         .screen { display: none; }
         .screen.active { display: block; animation: fadeIn 0.4s ease; }
@@ -123,9 +128,9 @@
             color: #ff3366;
             font-weight: bold;
             font-size: 14px;
+            cursor: pointer;
         }
 
-        /* Игра с номерами */
         .car-game {
             background: #f8f9fa;
             border: 2px solid #ff3366;
@@ -157,7 +162,6 @@
         }
         .tag { background: #ffecf0; color: #ff3366; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
 
-        /* Колесо Фортуны */
         .wheel-box {
             background: #fff0f3;
             border: 2px dashed #ff3366;
@@ -173,7 +177,6 @@
             justify-content: center;
         }
 
-        /* Игра с Мечтами */
         .card-stack {
             min-height: 60px;
             display: flex;
@@ -262,11 +265,11 @@
             <label for="stageSelect">Этап:</label>
             <select id="stageSelect" onchange="jumpToStage(this.value)">
                 <option value="1">1. Старт 🚗</option>
-                <option value="2">2. Номера (10k) 🚘</option>
+                <option value="2">2. Номера (50k) 🚘</option>
                 <option value="3">3. Авто-Фото (15х15) 📸</option>
                 <option value="4">4. Викторина 💖</option>
                 <option value="5">5. Рулетка в дороге 🎰</option>
-                <option value="6">6. Кафе & Цветы ☕💐</option>
+                <option value="6">6. Время Отдыха ☕</option>
                 <option value="7">7. Фото в городе 🏙️</option>
                 <option value="8">8. Аттракционы 🎡</option>
                 <option value="9">9. Мечты (50+) 🧩</option>
@@ -284,13 +287,13 @@
         <!-- 1. Старт -->
         <div id="screen1" class="screen active">
             <h2>Дорожный Квест 🚗💨</h2>
-            <p>Астана ➔ Алматы! Начинаем нашу игру прямо в машине.</p>
+            <p>Астана ➔ Балхаш ➔ Алматы! Начинаем наше путешествие прямо сейчас.</p>
             <button class="btn-main" onclick="goToScreen(2)">Поехали! 🚀</button>
         </div>
 
-        <!-- 2. Номера 10000 -->
+        <!-- 2. Номера 50000 -->
         <div id="screen2" class="screen">
-            <h2>Охота за номерами (50 000 очков) 🚘</h2>
+            <h2>Охота за номерами (50 000) 🚘</h2>
             <p>Набираем 50 000 очков по встречным машинам! Повторять номера нельзя.</p>
             <div class="car-game">
                 <div>Сумма:</div>
@@ -321,11 +324,13 @@
             <button class="btn-main" id="toQuizBtn" style="display:none; margin-top:10px;" onclick="goToScreen(4)">Дальше к Викторине 💖</button>
         </div>
 
-        <!-- 4. Викторина -->
+        <!-- 4. Викторина из 13 вопросов -->
         <div id="screen4" class="screen">
             <h2>Вопросы про нас 💖</h2>
+            <div style="font-size:12px; color:#888; margin-bottom:5px;" id="quizCounter">Вопрос 1 из 13</div>
             <p id="quizQuestion">Загрузка вопроса...</p>
             <div id="quizOptions"></div>
+            <div id="quizFeedback" style="color:#ff3366; font-size:12px; font-weight:bold; margin-top:8px;"></div>
             <div class="reward-badge" id="reward4">🏆 НАГРАДА: «Нежный комплимент от водителя!»</div>
         </div>
 
@@ -335,26 +340,31 @@
             <p>Выбей случайный бонус для поездки!</p>
             <div class="wheel-box" id="wheelResult">???</div>
             <button class="btn-main" id="spinWheelBtn" onclick="spinRoadWheel()">Крутить! 🎡</button>
-            <button class="btn-main" id="toCafeBtn" style="display:none; margin-top:10px;" onclick="goToScreen(6)">Приехали! В Кафе ☕</button>
+            <button class="btn-main" id="toCafeBtn" style="display:none; margin-top:10px;" onclick="goToScreen(6)">Остановка: Балхаш ☕</button>
         </div>
 
-        <!-- 6. Кафе & Цветы -->
+        <!-- 6. Кафе / Прибытие в Балхаш -->
         <div id="screen6" class="screen">
-            <h2>Время Отдыха & Еды ☕💐</h2>
-            <div class="location-badge">📍 Кафе / Перекус</div>
-            <p>Заказываем еду, расслабляемся после дороги!</p>
+            <h2>Прибытие в Балхаш & Отдых ☕🩵</h2>
+            <div class="location-badge">📍 Остановка / Перекус</div>
+            <p>Отдыхаем с дороги и наслаждаемся моментом!</p>
             <div class="timer-box" id="flowerTimer">15:00</div>
             <button onclick="skipTimerForTest()" style="background:none; border:none; color:#bbb; font-size:10px; cursor:pointer;">[Пропустить таймер]</button>
             
-            <div class="reward-badge" id="reward6">🏆 НАГРАДА: «Вручение букета цветов! 💐»</div>
+            <div class="reward-badge" id="reward6">
+                🏆 СЮРПРИЗ: «Вручение небесно-голубой гортензии! 🩵»<br>
+                <span style="font-size:11px; font-weight:normal; display:block; margin-top:5px; color:#555;">
+                    Этот цвет означает искренность, преданность и глубину наших чувств!
+                </span>
+            </div>
             <button id="nextAfterTimerBtn" class="btn-main" style="display:none; margin-top:10px;" onclick="goToScreen(7)">Дальше: Городское Фото 🏙️</button>
         </div>
 
         <!-- 7. Фото в городе -->
         <div id="screen7" class="screen">
             <h2>Городской Фото-Челлендж 🏙️📸</h2>
-            <div class="location-badge">📍 Красивая локация в городе</div>
-            <p>Сделайте красивое совместное фото на фоне города или парка!</p>
+            <div class="location-badge">📍 Красивая локация</div>
+            <p>Сделайте красивое совместное фото на память!</p>
             <div class="reward-badge" id="reward7" style="display:block;">🏆 НАГРАДА: «Вкусное мороженое / десерт!»</div>
             <button class="btn-main" onclick="goToScreen(8)">Едем на Аттракционы 🎡</button>
         </div>
@@ -429,7 +439,7 @@
 
         function jumpToStage(num) { goToScreen(num); }
 
-        // 1. Игра с номерами (10 000)
+        // 1. Игра с номерами (50 000)
         let score = 0;
         const targetScore = 50000;
         const usedNumbers = new Set();
@@ -457,28 +467,19 @@
             }
         }
 
-        // 2. Фото-Рулетка в машине (15х15)
+        // 2. Фото-Рулетка
         const photoIdeas = [
-            "🫶 Сделать пальцами сердечко",
-            "😜 Показать самый смешной язык",
-            "😎 Надеть очки и сделать крутой вид",
-            "👩‍❤️‍👨 Нежный поцелуй в щечку",
-            "😲 Изобразить крайнее удивление",
-            "🤪 Сделать смешное «гуфи» лицо",
-            "🤫 Палец к губам — секретный кадр",
-            "✌️ Показать знак Victory / Мир",
-            "🙈 Закрыть глаза руками",
-            "👑 Поза королевы / короля",
-            "👀 Посмотреть друг на друга и улыбнуться",
-            "💪 Показать суровые мышцы",
-            "😴 Сделать вид, что спишь на плече",
-            "📸 Профиль под красивым углом",
+            "🫶 Сделать пальцами сердечко", "😜 Показать самый смешной язык",
+            "😎 Надеть очки и сделать крутой вид", "👩‍❤️‍👨 Нежный поцелуй в щечку",
+            "😲 Изобразить крайнее удивление", "🤪 Сделать смешное «гуфи» лицо",
+            "🤫 Палец к губам — секретный кадр", "✌️ Показать знак Victory / Мир",
+            "🙈 Закрыть глаза руками", "👑 Поза королевы / короля",
+            "👀 Посмотреть друг на друга и улыбнуться", "💪 Показать суровые мышцы",
+            "😴 Сделать вид, что спишь на плече", "📸 Профиль под красивым углом",
             "💖 Воздушный поцелуй в камеру"
         ];
 
-        let p1Score = 0; // Твои фото
-        let p2Score = 0; // Ее фото
-        let currentTurn = 0; // 0 = Султан, 1 = Рауанна
+        let p1Score = 0, p2Score = 0, currentTurn = 0;
 
         function updatePhotoHeader() {
             if (p1Score < 15 || p2Score < 15) {
@@ -502,13 +503,8 @@
         }
 
         function nextPhotoTurn() {
-            if (currentTurn === 0) {
-                p1Score++;
-                currentTurn = 1;
-            } else {
-                p2Score++;
-                currentTurn = 0;
-            }
+            if (currentTurn === 0) { p1Score++; currentTurn = 1; } 
+            else { p2Score++; currentTurn = 0; }
 
             document.getElementById('spinPhotoBtn').disabled = false;
             document.getElementById('confirmPhotoBtn').style.display = 'none';
@@ -526,28 +522,51 @@
             }
         }
 
-        // 3. Викторина
+        // 3. Викторина с 13 вопросами
         const questions = [
-            { q: "Кто первый признался в чувствах?", opts: ["Ты", "Я", "Это было взаимно!"], ans: 1 },
-            { q: "Наше главное правило перед отъездом?", opts: ["Всегда быть на связи", "Чаще улыбаться", "Не скучать"], ans: 0 }
+            { q: "Кто из нас первым признался в чувствах?", opts: ["Султан 🤴", "Рауанна 👸", "Мы одновременно!"], ans: 0 },
+            { q: "Наше главное правило во время разлуки?", opts: ["Всегда быть на связи и делиться всем 📲", "Никогда не грустить 😃", "Созваниваться строго раз в неделю ⏰"], ans: 0 },
+            { q: "Какое наше любимое занятие на природе?", opts: ["Смотреть на звезды ✨", "Просто спать в палате 💤", "Ловить рыбу целый день 🎣"], ans: 0 },
+            { q: "Кто чаще засыпает во время просмотра фильмов?", opts: ["Султан 😴", "Рауанна 😴", "Никто, мы смотрим до конца! 👀"], ans: 2 },
+            { q: "Какой самый любимый сырок у Рауанны?", opts: ["Чудо 🍫", "Александров 👑", "Растишка 🍓"], ans: 0 },
+            { q: "Что Султан стабильно заказывает в заведениях?", opts: ["Ганбян цомян 🍜", "Лагман по-уйгурски 🍝", "Шашлык ассорти 🥩"], ans: 0 },
+            { q: "Как Султан больше всего любит отдыхать?", opts: ["Дома в уюте 🏠", "На шумных тусовках 🎉", "На экстрим-аттракционах 🎢"], ans: 0 },
+            { q: "Кто из нас объективно лучше готовит?", opts: ["Рауанна (1000%) 👩‍🍳", "Султан 👨‍🍳", "Доставка еды 📦"], ans: 0 },
+            { q: "Какое самое первое блюдо Рауанна приготовила для Султана?", opts: ["Брауни 🍫🍰", "Блины 🥞", "Пасту Карбонара 🍝"], ans: 0 },
+            { q: "Наша самая первая совместная поездка была...", opts: ["В Капчагай ночью 🌊🌙", "На Кольсай 🏞️", "В Боровое 🌲"], ans: 0 },
+            { q: "Где мы впервые познакомились?", opts: ["На работе 💼", "В инстаграме 📱", "Через общих друзей 👫"], ans: 0 },
+            { q: "Сколько суммарно поездок у нас было из/в Астану?", opts: ["4 поездки 🚘", "2 поездки 🚗", "6 поездок 🚙"], ans: 0 },
+            { q: "Насколько сильно Султан тебя любит?", opts: ["Бесконечно! ∞💖", "Очень сильно 💘", "Больше всех 💓"], ans: 0 }
         ];
         let currentQ = 0;
+
         function renderQuiz() {
             const q = questions[currentQ];
+            document.getElementById('quizCounter').innerText = `Вопрос ${currentQ + 1} из ${questions.length}`;
             document.getElementById('quizQuestion').innerText = q.q;
+            document.getElementById('quizFeedback').innerText = '';
             const container = document.getElementById('quizOptions');
             container.innerHTML = '';
-            q.opts.forEach((opt) => {
+
+            q.opts.forEach((opt, index) => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.innerText = opt;
                 btn.onclick = () => {
-                    currentQ++;
-                    if (currentQ < questions.length) {
-                        renderQuiz();
+                    if (index === q.ans) {
+                        currentQ++;
+                        if (currentQ < questions.length) {
+                            renderQuiz();
+                        } else {
+                            document.getElementById('quizCounter').innerText = "13 из 13 🎉";
+                            document.getElementById('quizOptions').innerHTML = '';
+                            document.getElementById('quizQuestion').innerText = "🎉 Ты идеально знаешь нашу историю!";
+                            document.getElementById('reward4').style.display = 'block';
+                            triggerConfetti();
+                            setTimeout(() => goToScreen(5), 2200);
+                        }
                     } else {
-                        document.getElementById('reward4').style.display = 'block';
-                        setTimeout(() => goToScreen(5), 1800);
+                        document.getElementById('quizFeedback').innerText = "Неправильно! Попробуй еще раз 😜";
                     }
                 };
                 container.appendChild(btn);
@@ -582,7 +601,7 @@
                 timerEl.innerText = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
                 if (totalSeconds <= 0) {
                     clearInterval(timerInterval);
-                    timerEl.innerText = "Время пришло! 💐";
+                    timerEl.innerText = "Время пришло! 🩵";
                     document.getElementById('reward6').style.display = 'block';
                     document.getElementById('nextAfterTimerBtn').style.display = 'block';
                     triggerConfetti();
@@ -596,7 +615,7 @@
         const dreamsList = [
             "Поездка в Великобританию 🇬🇧", "Массаж всего тела 💆‍♀️", "Отдых на Балхаше 🌊", "Крепкие обнимашки 🧸",
             "Завтрак в постель 🥞", "Сходить в кино на романтику 🍿", "Купить красивое платье 👗", "Прогулка под луной 🌙",
-            "Вкусный романтический ужин 🍷", "Поездка в горы 🏔️", "Большой букет роз 🌹", "Парный СПА-день 🧖‍♀️",
+            "Вкусный романтический ужин 🍷", "Поездка в горы 🏔️", "Большая гортензия 🩵", "Парный СПА-день 🧖‍♀️",
             "Устроить пикник на природе 🧺", "Поездка на море 🏖️", "Спонтанное путешествие ✈️", "Сладкий десерт late night 🍰",
             "Ночь просмотров сериалов 🎬", "Фотосессия вдвоем 📸", "Новый парфюм 🧴", "Поцелуй под дождем 🌧️",
             "День без будильников ⏰", "Катание на колесе обозрения 🎡", "Милый мягкий мишка 🧸", "Поход в аквапарк 🏊‍♀️",
