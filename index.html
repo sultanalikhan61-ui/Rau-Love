@@ -164,10 +164,10 @@
             border-radius: 20px;
             padding: 15px;
             margin: 15px 0;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             color: #ff3366;
-            min-height: 70px;
+            min-height: 75px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -193,7 +193,6 @@
             cursor: pointer;
             transition: transform 0.2s;
         }
-        .active-dream-card:active { transform: scale(0.95); }
 
         .game-board { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
         .zone-btn {
@@ -207,7 +206,6 @@
             color: #ff3366;
             cursor: pointer;
         }
-        .zone-btn:hover { background: #ffe6eb; }
 
         .timer-box {
             background: #fff0f3;
@@ -265,7 +263,7 @@
             <select id="stageSelect" onchange="jumpToStage(this.value)">
                 <option value="1">1. Старт 🚗</option>
                 <option value="2">2. Номера (10k) 🚘</option>
-                <option value="3">3. Фото в машине 📸</option>
+                <option value="3">3. Авто-Фото (15х15) 📸</option>
                 <option value="4">4. Викторина 💖</option>
                 <option value="5">5. Рулетка в дороге 🎰</option>
                 <option value="6">6. Кафе & Цветы ☕💐</option>
@@ -308,18 +306,18 @@
             <button class="btn-main" id="toPhotoBtn" style="display:none;" onclick="goToScreen(3)">Дальше к Авто-Фото 📸</button>
         </div>
 
-        <!-- 3. Авто-Фото рулетка -->
+        <!-- 3. Авто-Фото рулетка (15х15) -->
         <div id="screen3" class="screen">
-            <h2>Фото-Челлендж в машине 📸🚘</h2>
-            <p>Крути колесо! Выполняйте тематическое фото прямо в салоне авто по очереди.</p>
+            <h2>Авто Фото-Челлендж 📸🚘</h2>
+            <p>Делаем по 15 разных фото прямо в машине!</p>
             
-            <div style="font-weight: bold; color: #ff3366; margin-bottom: 5px;" id="turnIndicator">Очередь: 🤴 Твой черед!</div>
-            <div class="wheel-box" id="photoIdeaBox">Нажми "Крутить Идею"!</div>
+            <div style="font-size:13px; font-weight:bold; color:#ff3366;" id="turnIndicator">Очередь: 🤴 Твой черед! (Фото 1 из 15)</div>
+            <div class="wheel-box" id="photoIdeaBox">Нажми "Получить Идею"!</div>
             
-            <button class="btn-main" id="spinPhotoBtn" onclick="spinPhotoIdea()">Крутить Идею! 🎡</button>
-            <button class="btn-main" id="confirmPhotoBtn" style="display:none; margin-top:10px;" onclick="nextPhotoTurn()">Фото сделано! ✅</button>
+            <button class="btn-main" id="spinPhotoBtn" onclick="spinPhotoIdea()">Получить Идею! 🎡</button>
+            <button class="btn-main" id="confirmPhotoBtn" style="display:none; margin-top:10px;" onclick="nextPhotoTurn()">Сфоткались! ✅</button>
             
-            <div class="reward-badge" id="reward3">🏆 НАГРАДА: «30 секунд обнимашек на первой же остановке!»</div>
+            <div class="reward-badge" id="reward3">🏆 НАГРАДА: «30 секунд крепких обнимашек!»</div>
             <button class="btn-main" id="toQuizBtn" style="display:none; margin-top:10px;" onclick="goToScreen(4)">Дальше к Викторине 💖</button>
         </div>
 
@@ -404,7 +402,7 @@
             </div>
             <div class="letter-content" id="letterText" style="display:none;">
                 <b>Любимая моя, Рауанна!</b><br><br>
-                Вот и подходит к концу наш невероятный дорожный день, полный улыбок, смеха и маленьких совместных побед. Каждая минута, проведенная с тобой — от простой поездки под любимую музыку до этих романтичных вечерних моментов — наполняет меня огромным счастьем.<br><br>
+                Вот и подходит к концу наш невероятный дорожный день, полный улыбок, смеха и маленьких совместных побед. Каждая минута, проведенная с тобой — от простой поездки под любимую музыку до этих романтичных вечерних моментов — наполняет меня огромным счастья.<br><br>
                 Впереди меня ждет важный шаг — переезд в Великобританию. Но я хочу, чтобы ты всегда знала и помнила: никакие километры, часовые пояса и границы не смогут изменить того, что я к тебе чувствую. Ты — мой главный вдохновитель, мое тепло, моя поддержка и мой самый родной человек. Я забираю с собой в сердце каждый твой взгляд, твой смех и нежность.<br><br>
                 Я желаю тебе бесконечной веры в себя, легкого преодоления всех жизненных задач, вдохновения и радости в каждом дне. Пусть все мечты, которые мы сегодня загадали и распределили, обязательно сбудутся! Это не прощание, это лишь начало нашей новой, взрослой и еще более красивой истории. Я буду невероятно скучать, с нетерпением ждать каждой нашей связи и делать всё, чтобы гордиться нашей любовью.<br><br>
                 Спасибо тебе за этот день, за твою искренность и за то, что ты есть у меня. Я тебя очень сильно люблю! 💕
@@ -459,41 +457,72 @@
             }
         }
 
-        // 2. Фото-Рулетка в машине
+        // 2. Фото-Рулетка в машине (15х15)
         const photoIdeas = [
-            "🫶 Сделать пальцами совместное сердечко",
-            "😜 Показать самый смешной язык в камеру",
-            "😎 Надеть солнечные очки и сделать крутой вид",
-            "👩‍❤️‍👨 Поцелуй в щечку"
+            "🫶 Сделать пальцами сердечко",
+            "😜 Показать самый смешной язык",
+            "😎 Надеть очки и сделать крутой вид",
+            "👩‍❤️‍👨 Нежный поцелуй в щечку",
+            "😲 Изобразить крайнее удивление",
+            "🤪 Сделать смешное «гуфи» лицо",
+            "🤫 Палец к губам — секретный кадр",
+            "✌️ Показать знак Victory / Мир",
+            "🙈 Закрыть глаза руками",
+            "👑 Поза королевы / короля",
+            "👀 Посмотреть друг на друга и улыбнуться",
+            "💪 Показать суровые мышцы",
+            "😴 Сделать вид, что спишь на плече",
+            "📸 Профиль под красивым углом",
+            "💖 Воздушный поцелуй в камеру"
         ];
-        let turnCount = 0; 
+
+        let p1Score = 0; // Твои фото
+        let p2Score = 0; // Ее фото
+        let currentTurn = 0; // 0 = Султан, 1 = Рауанна
+
+        function updatePhotoHeader() {
+            if (p1Score < 15 || p2Score < 15) {
+                if (currentTurn === 0) {
+                    document.getElementById('turnIndicator').innerText = `Очередь: 🤴 Твой черед! (Фото ${p1Score + 1} из 15)`;
+                } else {
+                    document.getElementById('turnIndicator').innerText = `Очередь: 👸 Её черед! (Фото ${p2Score + 1} из 15)`;
+                }
+            }
+        }
 
         function spinPhotoIdea() {
             const box = document.getElementById('photoIdeaBox');
-            box.innerText = "Выбираем тему...";
+            box.innerText = "Ищем идею...";
             document.getElementById('spinPhotoBtn').disabled = true;
             setTimeout(() => {
                 const idea = photoIdeas[Math.floor(Math.random() * photoIdeas.length)];
                 box.innerText = idea;
                 document.getElementById('confirmPhotoBtn').style.display = 'block';
-            }, 1200);
+            }, 800);
         }
 
         function nextPhotoTurn() {
-            turnCount++;
+            if (currentTurn === 0) {
+                p1Score++;
+                currentTurn = 1;
+            } else {
+                p2Score++;
+                currentTurn = 0;
+            }
+
             document.getElementById('spinPhotoBtn').disabled = false;
             document.getElementById('confirmPhotoBtn').style.display = 'none';
 
-            if (turnCount === 1) {
-                document.getElementById('turnIndicator').innerText = "Очередь: 👸 Её черед!";
-                document.getElementById('photoIdeaBox').innerText = "Крути для её кадра!";
-            } else {
-                document.getElementById('turnIndicator').innerText = "🎉 Все фото сделаны!";
-                document.getElementById('photoIdeaBox').innerText = "Отличные кадры!";
+            if (p1Score >= 15 && p2Score >= 15) {
+                document.getElementById('turnIndicator').innerText = "🎉 Все 30 фото готовы!";
+                document.getElementById('photoIdeaBox').innerText = "Отличное авто-портфолио!";
                 document.getElementById('spinPhotoBtn').style.display = 'none';
                 document.getElementById('reward3').style.display = 'block';
                 document.getElementById('toQuizBtn').style.display = 'block';
                 triggerConfetti();
+            } else {
+                document.getElementById('photoIdeaBox').innerText = "Нажми «Получить Идею»!";
+                updatePhotoHeader();
             }
         }
 
@@ -563,7 +592,7 @@
         }
         function skipTimerForTest() { totalSeconds = 2; }
 
-        // 6. Игра с 52 карточками Мечты
+        // 6. Игра с Мечтами
         const dreamsList = [
             "Поездка в Великобританию 🇬🇧", "Массаж всего тела 💆‍♀️", "Отдых на Балхаше 🌊", "Крепкие обнимашки 🧸",
             "Завтрак в постель 🥞", "Сходить в кино на романтику 🍿", "Купить красивое платье 👗", "Прогулка под луной 🌙",
