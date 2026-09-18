@@ -218,11 +218,11 @@
             border-radius: 10px;
             font-size: 11px;
             font-weight: bold;
-            cursor: grab;
+            cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             transition: transform 0.2s;
         }
-        .dream-card:active { cursor: grabbing; transform: scale(0.95); }
+        .dream-card:active { transform: scale(0.95); }
 
         .timer-box {
             background: #fff0f3;
@@ -387,30 +387,29 @@
             <h2>Городской Фото-Челлендж 🏙️📸</h2>
             <div class="location-badge">📍 Красивая локация</div>
             <p>Сделайте красивое совместное фото на память!</p>
-            <div class="reward-badge" id="reward7" style="display:block;">🏆 НАГРАДА: «Вкусное мороженое / десерт!»</div>
             <button class="btn-main" onclick="goToScreen(9)">Едем к Распределению Мечт 🧩</button>
         </div>
 
-        <!-- 9. Мечты с автопривязкой -->
+        <!-- 9. Мечты (Интерактивный клик для телефонов) -->
         <div id="screen9" class="screen">
             <h2>Распредели Мечты 🧩✨</h2>
-            <p style="font-size:12px;">Перетащи карточку в нужную колонку — она автоматически встанет по очереди!</p>
+            <p style="font-size:12px; color:#ff3366; font-weight:bold;" id="dreamTurnText">1. Нажми на карточку снизу<br>2. Выбери, чья это мечта!</p>
 
             <div class="dreams-container">
-                <div class="drop-zone" id="zoneRauanna" ondragover="allowDrop(event)" ondrop="drop(event, 'zoneRauanna')">
+                <div class="drop-zone" id="zoneRauanna" onclick="assignSelectedDream('zoneRauanna')">
                     <h4>👸 Её Хотелки</h4>
                 </div>
-                <div class="drop-zone" id="zoneSultan" ondragover="allowDrop(event)" ondrop="drop(event, 'zoneSultan')">
+                <div class="drop-zone" id="zoneSultan" onclick="assignSelectedDream('zoneSultan')">
                     <h4>🤴 Мои Хотелки</h4>
                 </div>
             </div>
 
             <div style="font-size:11px; color:#777; margin-top:10px;">Доступные карточки мечты:</div>
-            <div class="pool-zone" id="poolZone" ondragover="allowDrop(event)" ondrop="drop(event, 'poolZone')">
+            <div class="pool-zone" id="poolZone">
                 <!-- Карточки рендерятся динамически -->
             </div>
 
-            <div class="reward-badge" id="reward9">🏆 Все карточки распределены! Сладкий бонус наш!</div>
+            <div class="reward-badge" id="reward9">🏆 НАГРАДА: «Вкусное мороженое / десерт!»</div>
             <button class="btn-main" id="toSpaBtn" style="display:none; margin-top:15px;" onclick="goToScreen(10)">Перейти к СПА 💆‍♀️</button>
         </div>
 
@@ -485,7 +484,7 @@
             }
         }
 
-        // 2. Фото-Рулетка
+        // 2. Фото-Рулетка (Этап 3 - без повторов идей)
         const photoIdeas = [
             "🫶 Сделать пальцами сердечко", "😜 Показать самый смешной язык",
             "😎 Надеть очки и сделать крутой вид", "👩‍❤️‍👨 Нежный поцелуй в щечку",
@@ -496,6 +495,7 @@
             "😴 Сделать вид, что спишь на плече", "📸 Профиль под красивым углом",
             "💖 Воздушный поцелуй в камеру"
         ];
+        let availablePhotoIdeas = [...photoIdeas];
 
         let p1Score = 0, p2Score = 0, currentTurn = 0;
 
@@ -514,7 +514,11 @@
             box.innerText = "Ищем идею...";
             document.getElementById('spinPhotoBtn').disabled = true;
             setTimeout(() => {
-                const idea = photoIdeas[Math.floor(Math.random() * photoIdeas.length)];
+                if (availablePhotoIdeas.length === 0) {
+                    availablePhotoIdeas = [...photoIdeas];
+                }
+                const randomIndex = Math.floor(Math.random() * availablePhotoIdeas.length);
+                const idea = availablePhotoIdeas.splice(randomIndex, 1)[0];
                 box.innerText = idea;
                 document.getElementById('confirmPhotoBtn').style.display = 'block';
             }, 800);
@@ -629,7 +633,7 @@
         }
         function skipTimerForTest() { totalSeconds = 2; }
 
-        // 6. Мечты - Drag & Drop с автопривязкой
+        // 6. Мечты (Этап 9 - Интерактивный клик)
         const dreamsList = [
             "Поездка в Великобританию 🇬🇧", "Массаж всего тела 💆‍♀️", "Отдых на Балхаше 🌊", "Крепкие обнимашки 🧸",
             "Завтрак в постель 🥞", "Сходить в кино на романтику 🍿", "Купить красивое платье 👗", "Прогулка под луной 🌙",
@@ -647,32 +651,49 @@
             "Вечная любовь и поддержка 💕"
         ];
 
+        let selectedDreamCard = null;
+
         function initDreamsGame() {
             const pool = document.getElementById('poolZone');
-            if (pool.children.length > 0) return; // Ужe загружено
+            if (pool.children.length > 0) return;
 
             dreamsList.forEach((dream, idx) => {
                 const card = document.createElement('div');
                 card.className = 'dream-card';
                 card.innerText = dream;
                 card.id = 'dream-' + idx;
-                card.setAttribute('data-id', idx);
-                card.setAttribute('draggable', 'true');
-                card.ondragstart = (e) => e.dataTransfer.setData('text/plain', card.id);
+                card.onclick = () => selectDreamCard(card);
                 pool.appendChild(card);
             });
         }
 
-        function allowDrop(e) { e.preventDefault(); }
+        function selectDreamCard(card) {
+            document.querySelectorAll('.dream-card').forEach(c => {
+                if (c.parentNode.id === 'poolZone') {
+                    c.style.border = '1px solid #ff3366';
+                    c.style.background = 'white';
+                }
+            });
 
-        function drop(e, targetZoneId) {
-            e.preventDefault();
-            const id = e.dataTransfer.getData('text/plain');
-            const card = document.getElementById(id);
-            if (!card) return;
+            if (card.parentNode.id === 'poolZone') {
+                selectedDreamCard = card;
+                card.style.border = '2px solid #4caf50';
+                card.style.background = '#e8f5e9';
+            }
+        }
+
+        function assignSelectedDream(targetZoneId) {
+            if (!selectedDreamCard) {
+                alert("Сначала нажми на карточку мечты снизу!");
+                return;
+            }
 
             const targetZone = document.getElementById(targetZoneId);
-            targetZone.appendChild(card); // Автопривязка: элемент встает аккуратно по списку
+            selectedDreamCard.style.border = '1px solid #ff3366';
+            selectedDreamCard.style.background = 'white';
+            selectedDreamCard.onclick = null; // Отключаем клики после переноса
+            targetZone.appendChild(selectedDreamCard);
+            selectedDreamCard = null;
 
             checkDreamsCompletion();
         }
@@ -682,6 +703,7 @@
             if (pool.children.length === 0) {
                 document.getElementById('reward9').style.display = 'block';
                 document.getElementById('toSpaBtn').style.display = 'block';
+                document.getElementById('dreamTurnText').style.display = 'none';
                 triggerConfetti();
             }
         }
@@ -710,4 +732,4 @@
         function finishQuest() { triggerConfetti(); }
     </script>
 </body>
-              </html>
+</html>
