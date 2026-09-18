@@ -220,7 +220,7 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
+            transition: transform 0.2s, background 0.2s;
         }
         .dream-card:active { transform: scale(0.95); }
 
@@ -284,9 +284,9 @@
                 <option value="4">4. Викторина 💖</option>
                 <option value="5">5. Рулетка в дороге 🎰</option>
                 <option value="6">6. Балхаш & Отдых ☕</option>
-                <option value="7">7. Аттракционы 🎡</option>
-                <option value="8">8. Фото в городе 🏙️</option>
-                <option value="9">9. Мечты 🧩</option>
+                <option value="7">7. Мечты 🧩</option>
+                <option value="8">8. Фото в городе (15х15) 🏙️</option>
+                <option value="9">9. Аттракционы 🎡</option>
                 <option value="10">10. SPA 💆‍♀️</option>
                 <option value="11">11. Закат & Финал 🌅</option>
             </select>
@@ -371,27 +371,11 @@
                     Этот цвет означает искренность, преданность и глубину наших чувств!
                 </span>
             </div>
-            <button id="nextAfterTimerBtn" class="btn-main" style="display:none; margin-top:10px;" onclick="goToScreen(7)">Дальше: Аттракционы 🎡</button>
+            <button id="nextAfterTimerBtn" class="btn-main" style="display:none; margin-top:10px;" onclick="goToScreen(7)">Дальше: Распределение Мечт 🧩</button>
         </div>
 
-        <!-- 7. Аттракционы -->
+        <!-- 7. Мечты (Зафиксированные за персонами) -->
         <div id="screen7" class="screen">
-            <h2>Парк Аттракционов 🎡</h2>
-            <div class="location-badge">📍 Колесо Обозрения</div>
-            <p>Наслаждаемся вечером и катаемся!</p>
-            <button class="btn-main" onclick="goToScreen(8)">Дальше: Фото в городе 🏙️</button>
-        </div>
-
-        <!-- 8. Фото в городе -->
-        <div id="screen8" class="screen">
-            <h2>Городской Фото-Челлендж 🏙️📸</h2>
-            <div class="location-badge">📍 Красивая локация</div>
-            <p>Сделайте красивое совместное фото на память!</p>
-            <button class="btn-main" onclick="goToScreen(9)">Едем к Распределению Мечт 🧩</button>
-        </div>
-
-        <!-- 9. Мечты (Интерактивный клик для телефонов) -->
-        <div id="screen9" class="screen">
             <h2>Распредели Мечты 🧩✨</h2>
             <p style="font-size:12px; color:#ff3366; font-weight:bold;" id="dreamTurnText">1. Нажми на карточку снизу<br>2. Выбери, чья это мечта!</p>
 
@@ -409,8 +393,31 @@
                 <!-- Карточки рендерятся динамически -->
             </div>
 
-            <div class="reward-badge" id="reward9">🏆 НАГРАДА: «Вкусное мороженое / десерт!»</div>
-            <button class="btn-main" id="toSpaBtn" style="display:none; margin-top:15px;" onclick="goToScreen(10)">Перейти к СПА 💆‍♀️</button>
+            <div class="reward-badge" id="reward7">🏆 НАГРАДА: «Вкусное мороженое / десерт!»</div>
+            <button class="btn-main" id="toCityPhotoBtn" style="display:none; margin-top:15px;" onclick="goToScreen(8)">Перейти к Городскому Фото 🏙️</button>
+        </div>
+
+        <!-- 8. Фото в городе (15х15) -->
+        <div id="screen8" class="screen">
+            <h2>Городской Фото-Челлендж 🏙️📸</h2>
+            <p>Делаем по 15 эстетичных кадров на улице!</p>
+            
+            <div style="font-size:13px; font-weight:bold; color:#ff3366;" id="cityTurnIndicator">Очередь: 🤴 Твой черед! (Фото 1 из 15)</div>
+            <div class="wheel-box" id="cityPhotoIdeaBox">Нажми "Получить Идею"!</div>
+            
+            <button class="btn-main" id="spinCityPhotoBtn" onclick="spinCityPhotoIdea()">Получить Идею! 🎡</button>
+            <button class="btn-main" id="confirmCityPhotoBtn" style="display:none; margin-top:10px;" onclick="nextCityPhotoTurn()">Сфоткались! ✅</button>
+            
+            <div class="reward-badge" id="reward8">🏆 НАГРАДА: «Милая прогулка за ручку!»</div>
+            <button class="btn-main" id="toAttractionsBtn" style="display:none; margin-top:10px;" onclick="goToScreen(9)">Едем к Аттракционам 🎡</button>
+        </div>
+
+        <!-- 9. Аттракционы -->
+        <div id="screen9" class="screen">
+            <h2>Парк Аттракционов 🎡</h2>
+            <div class="location-badge">📍 Колесо Обозрения</div>
+            <p>Наслаждаемся вечером и катаемся!</p>
+            <button class="btn-main" onclick="goToScreen(10)">Перейти к СПА 💆‍♀️</button>
         </div>
 
         <!-- 10. SPA -->
@@ -451,7 +458,7 @@
             document.getElementById('carIcon').style.left = (percent - 8) + '%';
 
             if (parseInt(num) === 6) startTimer();
-            if (parseInt(num) === 9) initDreamsGame();
+            if (parseInt(num) === 7) initDreamsGame();
         }
 
         function jumpToStage(num) { goToScreen(num); }
@@ -484,7 +491,7 @@
             }
         }
 
-        // 2. Фото-Рулетка (Этап 3 - без повторов идей)
+        // 2. Авто Фото-Челлендж (35+ тем)
         const photoIdeas = [
             "🫶 Сделать пальцами сердечко", "😜 Показать самый смешной язык",
             "😎 Надеть очки и сделать крутой вид", "👩‍❤️‍👨 Нежный поцелуй в щечку",
@@ -493,10 +500,19 @@
             "🙈 Закрыть глаза руками", "👑 Поза королевы / короля",
             "👀 Посмотреть друг на друга и улыбнуться", "💪 Показать суровые мышцы",
             "😴 Сделать вид, что спишь на плече", "📸 Профиль под красивым углом",
-            "💖 Воздушный поцелуй в камеру"
+            "💖 Воздушный поцелуй в камеру", "🤝 Пожать друг другу руки как боссы",
+            "🫱 Соединить половинки сердечка", "🤏 Щелчок пальцами в кадру",
+            "🧐 Строгий умный взгляд", "🤩 Взгляд полного восторга",
+            "😤 Изобразить сердитых напарников", "🖐️ Приложить ладонь к объективу",
+            "🤳 Селфи снизу вверх", "🧐 Взгляд из-за солнцезащитных очков",
+            "🫶 Сердечко из двух рук вместе", "🥐 Показать свой перекус в кадр",
+            "🥤 Сделать вид, что пьете из одного стакана", "🎧 Поделиться наушником и сфоткаться",
+            "🎀 Поправить прическу партнеру", "🤫 Совместный «тихий» кадр",
+            "👈 Указать друг на друга пальцами", "🫣 Взгляд сквозь пальцы",
+            "💥 Эпичная эпик-поза суперагентов", "🤗 Тёплые полу-обнимашки в креслах",
+            "✨ Синхронный подмиг в камеру"
         ];
         let availablePhotoIdeas = [...photoIdeas];
-
         let p1Score = 0, p2Score = 0, currentTurn = 0;
 
         function updatePhotoHeader() {
@@ -514,9 +530,7 @@
             box.innerText = "Ищем идею...";
             document.getElementById('spinPhotoBtn').disabled = true;
             setTimeout(() => {
-                if (availablePhotoIdeas.length === 0) {
-                    availablePhotoIdeas = [...photoIdeas];
-                }
+                if (availablePhotoIdeas.length === 0) availablePhotoIdeas = [...photoIdeas];
                 const randomIndex = Math.floor(Math.random() * availablePhotoIdeas.length);
                 const idea = availablePhotoIdeas.splice(randomIndex, 1)[0];
                 box.innerText = idea;
@@ -633,22 +647,63 @@
         }
         function skipTimerForTest() { totalSeconds = 2; }
 
-        // 6. Мечты (Этап 9 - Интерактивный клик)
-        const dreamsList = [
-            "Поездка в Великобританию 🇬🇧", "Массаж всего тела 💆‍♀️", "Отдых на Балхаше 🌊", "Крепкие обнимашки 🧸",
-            "Завтрак в постель 🥞", "Сходить в кино на романтику 🍿", "Купить красивое платье 👗", "Прогулка под луной 🌙",
-            "Вкусный романтический ужин 🍷", "Поездка в горы 🏔️", "Большая гортензия 🩵", "Парный СПА-день 🧖‍♀️",
-            "Устроить пикник на природе 🧺", "Поездка на море 🏖️", "Спонтанное путешествие ✈️", "Сладкий десерт late night 🍰",
-            "Ночь просмотров сериалов 🎬", "Фотосессия вдвоем 📸", "Новый парфюм 🧴", "Поцелуй под дождем 🌧️",
-            "День без будильников ⏰", "Катание на колесе обозрения 🎡", "Милый мягкий мишка 🧸", "Поход в аквапарк 🏊‍♀️",
-            "Завтрак с круассанами 🥐", "Вечер настолок 🎲", "Шопинг день 🛍️", "Уютный домашний плейлист 🎶",
-            "Свечи и релакс ванная 🛁", "Совместная готовка пиццы 🍕", "Поездка на каток ⛸️", "Сходить на концерт 🎤",
-            "Сделать парное тату 🎨", "Поездка за город на уикенд 🏕️", "Катание на лошадях 🐎", "Подарочный бокс 🎁",
-            "Любимое мороженое 🍦", "Кофе на рассвете ☕", "Медленный танец дома 💃", "Поход в галерею или музей 🖼️",
-            "Массаж ног после прогулки 🦶", "Подарить цветы без повода 🌸", "Парные футболки 👕", "Устроить день сладостей 🍫",
-            "Катание на лодке или катамаране 🚣", "Вечер с пижамной вечеринкой 🛌", "Общие фотографии на рабочий стол 📱",
-            "Поход на караоке 🎤", "Приготовить парный коктейль 🍹", "Романтичное письмо от руки ✉️", "Поездка в уединенный домик 🏡",
-            "Вечная любовь и поддержка 💕"
+        // 6. Мечты (С жесткой фиксацией правильных владельцев)
+        const dreamsData = [
+            // Ее хотелки (Rauanna)
+            { text: "Поездка в Великобританию 🇬🇧", owner: "zoneRauanna" },
+            { text: "Массаж всего тела 💆‍♀️", owner: "zoneRauanna" },
+            { text: "Завтрак в постель 🥞", owner: "zoneRauanna" },
+            { text: "Сходить в кино на романтику 🍿", owner: "zoneRauanna" },
+            { text: "Прогулка под луной 🌙", owner: "zoneRauanna" },
+            { text: "Купить красивое платье 👗", owner: "zoneRauanna" },
+            { text: "Большая гортензия 🩵", owner: "zoneRauanna" },
+            { text: "Парный СПА-день 🧖‍♀️", owner: "zoneRauanna" },
+            { text: "Поездка на море 🏖️", owner: "zoneRauanna" },
+            { text: "Спонтанное путешествие ✈️", owner: "zoneRauanna" },
+            { text: "Сладкий десерт late night 🍰", owner: "zoneRauanna" },
+            { text: "Новый парфюм 🧴", owner: "zoneRauanna" },
+            { text: "Милый мягкий мишка 🧸", owner: "zoneRauanna" },
+            { text: "Поход в аквапарк 🏊‍♀️", owner: "zoneRauanna" },
+            { text: "Шопинг день 🛍️", owner: "zoneRauanna" },
+            { text: "Сходить на концерт 🎤", owner: "zoneRauanna" },
+            { text: "Подарочный бокс 🎁", owner: "zoneRauanna" },
+            { text: "Любимое мороженое 🍦", owner: "zoneRauanna" },
+            { text: "Массаж ног после прогулки 🦶", owner: "zoneRauanna" },
+            { text: "Подарить цветы без повода 🌸", owner: "zoneRauanna" },
+            { text: "Вечная любовь и поддержка 💕", owner: "zoneRauanna" },
+
+            // Мои хотелки (Sultan)
+            { text: "Отдых на Балхаше 🌊", owner: "zoneSultan" },
+            { text: "Крепкие обнимашки 🧸", owner: "zoneSultan" },
+            { text: "Вкусный романтический ужин 🍷", owner: "zoneSultan" },
+            { text: "Поездка в горы 🏔️", owner: "zoneSultan" },
+            { text: "Устроить пикник на природе 🧺", owner: "zoneSultan" },
+            { text: "Ночь просмотров сериалов 🎬", owner: "zoneSultan" },
+            { text: "Фотосессия вдвоем 📸", owner: "zoneSultan" },
+            { text: "Поцелуй под дождем 🌧️", owner: "zoneSultan" },
+            { text: "День без будильников ⏰", owner: "zoneSultan" },
+            { text: "Катание на колесе обозрения 🎡", owner: "zoneSultan" },
+            { text: "Завтрак с круассанами 🥐", owner: "zoneSultan" },
+            { text: "Вечер настолок 🎲", owner: "zoneSultan" },
+            { text: "Уютный домашний плейлист 🎶", owner: "zoneSultan" },
+            { text: "Свечи и релакс ванная 🛁", owner: "zoneSultan" },
+            { text: "Совместная готовка пиццы 🍕", owner: "zoneSultan" },
+            { text: "Парные футболки 👕", owner: "zoneSultan" },
+            { text: "Устроить день сладостей 🍫", owner: "zoneSultan" },
+            { text: "Катание на лодке или катамаране 🚣", owner: "zoneSultan" },
+            { text: "Вечер с пижамной вечеринкой 🛌", owner: "zoneSultan" },
+            { text: "Общие фотографии на рабочий стол 📱", owner: "zoneSultan" },
+            { text: "Поход на караоке 🎤", owner: "zoneSultan" },
+            { text: "Приготовить парный коктейль 🍹", owner: "zoneSultan" },
+            { text: "Романтичное письмо от руки ✉️", owner: "zoneSultan" },
+            { text: "Поездка в уединенный домик 🏡", owner: "zoneSultan" },
+            { text: "Поездка на каток ⛸️", owner: "zoneSultan" },
+            { text: "Поездка за город на уикенд 🏕️", owner: "zoneSultan" },
+            { text: "Катание на лошадях 🐎", owner: "zoneSultan" },
+            { text: "Кофе на рассвете ☕", owner: "zoneSultan" },
+            { text: "Медленный танец дома 💃", owner: "zoneSultan" },
+            { text: "Поход в галерею или музей 🖼️", owner: "zoneSultan" },
+            { text: "Сделать парное тату 🎨", owner: "zoneSultan" }
         ];
 
         let selectedDreamCard = null;
@@ -657,11 +712,14 @@
             const pool = document.getElementById('poolZone');
             if (pool.children.length > 0) return;
 
-            dreamsList.forEach((dream, idx) => {
+            // Перемешиваем карточки
+            const shuffled = [...dreamsData].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((item, idx) => {
                 const card = document.createElement('div');
                 card.className = 'dream-card';
-                card.innerText = dream;
-                card.id = 'dream-' + idx;
+                card.innerText = item.text;
+                card.dataset.owner = item.owner;
                 card.onclick = () => selectDreamCard(card);
                 pool.appendChild(card);
             });
@@ -688,6 +746,20 @@
                 return;
             }
 
+            // Проверка правильного владельца!
+            if (selectedDreamCard.dataset.owner !== targetZoneId) {
+                selectedDreamCard.style.border = '2px solid #f44336';
+                selectedDreamCard.style.background = '#ffebee';
+                setTimeout(() => {
+                    if (selectedDreamCard && selectedDreamCard.parentNode.id === 'poolZone') {
+                        selectedDreamCard.style.border = '1px solid #ff3366';
+                        selectedDreamCard.style.background = 'white';
+                    }
+                }, 800);
+                alert("Упс! Это мечта другого человека 😜 Попробуй отправить в другую колонку!");
+                return;
+            }
+
             const targetZone = document.getElementById(targetZoneId);
             selectedDreamCard.style.border = '1px solid #ff3366';
             selectedDreamCard.style.background = 'white';
@@ -701,14 +773,98 @@
         function checkDreamsCompletion() {
             const pool = document.getElementById('poolZone');
             if (pool.children.length === 0) {
-                document.getElementById('reward9').style.display = 'block';
-                document.getElementById('toSpaBtn').style.display = 'block';
+                document.getElementById('reward7').style.display = 'block';
+                document.getElementById('toCityPhotoBtn').style.display = 'block';
                 document.getElementById('dreamTurnText').style.display = 'none';
                 triggerConfetti();
             }
         }
 
-        // 7. Финал
+        // 7. Городской Фото-Челлендж (35+ тем для города)
+        const cityPhotoIdeas = [
+            "💃 Красивое фото во весь рост у архитектуры",
+            "🌆 Встретить вечерний свет (Golden Hour)",
+            "☕ Сфоткаться с кофейными стаканчиками на улице",
+            "🚶‍♂️ Фото в движении (переходим дорогу/шагаем)",
+            "👩‍❤️‍👨 Поцелуй на фоне городского пейзажа",
+            "🕶️ Эстетичный кадр в отражении витрины",
+            "🫱 Идти за руку (кадр со спины)",
+            " bench Уютный кадр вместе на скамейке в парке",
+            "🏙️ Силуэтное фото на фоне заката",
+            "✨ Фото с огоньками вечернего города",
+            "🤳 Совместное селфи на фоне красивого здания",
+            "😜 Смешная совместная поза у памятника/граффити",
+            "👟 Фото «только наши кроссовки/ноги» на красивой плитке",
+            "🍃 Кадр сквозь зелень деревьев или цветы",
+            "🖤 Чёрно-белый глубокий портрет",
+            " Поймать отражение в луже или капоте машины",
+            "🛍️ Кадр с шопинг-пакетами на улицах города",
+            "💐 Фото с цветами на фоне городской улицы",
+            "🎀 Поправить друг другу одежду/шарф на камеру",
+            "👀 Случайный эмоциональный кадр (смех)",
+            "🌁 Сфоткаться на мосту или смотровой площадке",
+            "🪜 Фото на ступенях красивого здания",
+            "🎭 Изобразить героев фильма на улице",
+            "🍦 Фото со вкусняшкой/мороженым на ходу",
+            "🫶 Сделать сердечко из рук на фоне неба",
+            "👉 Найти романтичную вывеску и сняться под ней",
+            "🚲 Фото рядом с красивым велосипедом/самокатом",
+            "📱 Сфоткать экран телефона, где вы фоткаете друг друга",
+            "✨ Нежный взгляд глаза в глаза на людной улице",
+            "🧥 Укрыть друг друга курткой/пледом",
+            "🚪 Портрет у красивой старинной или стильной двери",
+            "🎈 Фото с шариками или уличным атрибутом",
+            "🌟 Романтичный кадр у фонаря",
+            "📸 Сделать кадр «вспышка в темноте»",
+            "🤗 Объятия со спины на фоне ночного города"
+        ];
+        let availableCityPhotoIdeas = [...cityPhotoIdeas];
+        let c1Score = 0, c2Score = 0, cityCurrentTurn = 0;
+
+        function updateCityPhotoHeader() {
+            if (c1Score < 15 || c2Score < 15) {
+                if (cityCurrentTurn === 0) {
+                    document.getElementById('cityTurnIndicator').innerText = `Очередь: 🤴 Твой черед! (Фото ${c1Score + 1} из 15)`;
+                } else {
+                    document.getElementById('cityTurnIndicator').innerText = `Очередь: 👸 Её черед! (Фото ${c2Score + 1} из 15)`;
+                }
+            }
+        }
+
+        function spinCityPhotoIdea() {
+            const box = document.getElementById('cityPhotoIdeaBox');
+            box.innerText = "Ищем идею...";
+            document.getElementById('spinCityPhotoBtn').disabled = true;
+            setTimeout(() => {
+                if (availableCityPhotoIdeas.length === 0) availableCityPhotoIdeas = [...cityPhotoIdeas];
+                const randomIndex = Math.floor(Math.random() * availableCityPhotoIdeas.length);
+                const idea = availableCityPhotoIdeas.splice(randomIndex, 1)[0];
+                box.innerText = idea;
+                document.getElementById('confirmCityPhotoBtn').style.display = 'block';
+            }, 800);
+        }
+
+        function nextCityPhotoTurn() {
+            if (cityCurrentTurn === 0) { c1Score++; cityCurrentTurn = 1; } 
+            else { c2Score++; cityCurrentTurn = 0; }
+
+            document.getElementById('spinCityPhotoBtn').disabled = false;
+            document.getElementById('confirmCityPhotoBtn').style.display = 'none';
+
+            if (c1Score >= 15 && c2Score >= 15) {
+                document.getElementById('cityTurnIndicator').innerText = "🎉 Все 30 городских фото готовы!";
+                document.getElementById('cityPhotoIdeaBox').innerText = "Шикарная городская фотосессия!";
+                document.getElementById('spinCityPhotoBtn').style.display = 'none';
+                document.getElementById('reward8').style.display = 'block';
+                document.getElementById('toAttractionsBtn').style.display = 'block';
+                triggerConfetti();
+            } else {
+                document.getElementById('cityPhotoIdeaBox').innerText = "Нажми «Получить Идею»!";
+                updateCityPhotoHeader();
+            }
+        }
+
+        // 8. Финал
         function openEnvelope() {
             document.getElementById('envelope').style.display = 'none';
             document.getElementById('letterText').style.display = 'block';
