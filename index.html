@@ -85,11 +85,6 @@
             margin-top: 10px;
             width: 100%;
         }
-        button.btn-main:disabled {
-            background-color: #ccc;
-            box-shadow: none;
-            cursor: not-allowed;
-        }
 
         .screen { display: none; }
         .screen.active { display: block; animation: fadeIn 0.4s ease; }
@@ -177,38 +172,57 @@
             justify-content: center;
         }
 
-        .card-stack {
-            min-height: 60px;
+        /* Интерактивные Мечты */
+        .dreams-container {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 15px;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 10px;
         }
-        .active-dream-card {
-            background: white;
-            border: 2px solid #ff3366;
-            padding: 12px 18px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #ff3366;
-            box-shadow: 0 5px 15px rgba(255, 51, 102, 0.2);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .game-board { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
-        .zone-btn {
+        .drop-zone {
             width: 48%;
+            min-height: 160px;
             background: #fff0f3;
             border: 2px dashed #ff3366;
             border-radius: 15px;
-            padding: 12px 8px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #ff3366;
-            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 220px;
+            overflow-y: auto;
         }
+        .drop-zone h4 {
+            font-size: 12px;
+            color: #ff3366;
+            margin-bottom: 4px;
+        }
+        .pool-zone {
+            background: #f8f9fa;
+            border: 2px dashed #bbb;
+            border-radius: 15px;
+            padding: 10px;
+            margin-top: 10px;
+            max-height: 140px;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+        }
+        .dream-card {
+            background: white;
+            border: 1px solid #ff3366;
+            color: #ff3366;
+            padding: 6px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: grab;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .dream-card:active { cursor: grabbing; transform: scale(0.95); }
 
         .timer-box {
             background: #fff0f3;
@@ -269,10 +283,10 @@
                 <option value="3">3. Авто-Фото (15х15) 📸</option>
                 <option value="4">4. Викторина 💖</option>
                 <option value="5">5. Рулетка в дороге 🎰</option>
-                <option value="6">6. Время Отдыха ☕</option>
-                <option value="7">7. Фото в городе 🏙️</option>
-                <option value="8">8. Аттракционы 🎡</option>
-                <option value="9">9. Мечты (50+) 🧩</option>
+                <option value="6">6. Балхаш & Отдых ☕</option>
+                <option value="7">7. Аттракционы 🎡</option>
+                <option value="8">8. Фото в городе 🏙️</option>
+                <option value="9">9. Мечты 🧩</option>
                 <option value="10">10. SPA 💆‍♀️</option>
                 <option value="11">11. Закат & Финал 🌅</option>
             </select>
@@ -287,7 +301,7 @@
         <!-- 1. Старт -->
         <div id="screen1" class="screen active">
             <h2>Дорожный Квест 🚗💨</h2>
-            <p>Астана ➔ Балхаш ➔ Алматы! Начинаем наше путешествие прямо сейчас.</p>
+            <p>Балхаш ➔ Алматы! Начинаем наше путешествие прямо сейчас.</p>
             <button class="btn-main" onclick="goToScreen(2)">Поехали! 🚀</button>
         </div>
 
@@ -324,7 +338,7 @@
             <button class="btn-main" id="toQuizBtn" style="display:none; margin-top:10px;" onclick="goToScreen(4)">Дальше к Викторине 💖</button>
         </div>
 
-        <!-- 4. Викторина из 13 вопросов -->
+        <!-- 4. Викторина -->
         <div id="screen4" class="screen">
             <h2>Вопросы про нас 💖</h2>
             <div style="font-size:12px; color:#888; margin-bottom:5px;" id="quizCounter">Вопрос 1 из 13</div>
@@ -357,42 +371,46 @@
                     Этот цвет означает искренность, преданность и глубину наших чувств!
                 </span>
             </div>
-            <button id="nextAfterTimerBtn" class="btn-main" style="display:none; margin-top:10px;" onclick="goToScreen(7)">Дальше: Городское Фото 🏙️</button>
+            <button id="nextAfterTimerBtn" class="btn-main" style="display:none; margin-top:10px;" onclick="goToScreen(7)">Дальше: Аттракционы 🎡</button>
         </div>
 
-        <!-- 7. Фото в городе -->
+        <!-- 7. Аттракционы -->
         <div id="screen7" class="screen">
+            <h2>Парк Аттракционов 🎡</h2>
+            <div class="location-badge">📍 Колесо Обозрения</div>
+            <p>Наслаждаемся вечером и катаемся!</p>
+            <button class="btn-main" onclick="goToScreen(8)">Дальше: Фото в городе 🏙️</button>
+        </div>
+
+        <!-- 8. Фото в городе -->
+        <div id="screen8" class="screen">
             <h2>Городской Фото-Челлендж 🏙️📸</h2>
             <div class="location-badge">📍 Красивая локация</div>
             <p>Сделайте красивое совместное фото на память!</p>
             <div class="reward-badge" id="reward7" style="display:block;">🏆 НАГРАДА: «Вкусное мороженое / десерт!»</div>
-            <button class="btn-main" onclick="goToScreen(8)">Едем на Аттракционы 🎡</button>
+            <button class="btn-main" onclick="goToScreen(9)">Едем к Распределению Мечт 🧩</button>
         </div>
 
-        <!-- 8. Аттракционы -->
-        <div id="screen8" class="screen">
-            <h2>Парк Аттракционов 🎡</h2>
-            <div class="location-badge">📍 Колесо Обозрения</div>
-            <p>Наслаждаемся вечером и катаемся!</p>
-            <button class="btn-main" onclick="goToScreen(9)">Дальше: Распредели Мечты 🧩</button>
-        </div>
-
-        <!-- 9. Мечты 50+ -->
+        <!-- 9. Мечты с автопривязкой -->
         <div id="screen9" class="screen">
             <h2>Распредели Мечты 🧩✨</h2>
-            <p>Распределите желаемое: нажимай куда отправить карточку!</p>
-            <div style="font-size:12px; color:#888; margin-bottom:8px;" id="dreamCounter">Карточка 1 из 52</div>
-            
-            <div class="card-stack">
-                <div class="active-dream-card" id="currentDreamCard">Загрузка...</div>
+            <p style="font-size:12px;">Перетащи карточку в нужную колонку — она автоматически встанет по очереди!</p>
+
+            <div class="dreams-container">
+                <div class="drop-zone" id="zoneRauanna" ondragover="allowDrop(event)" ondrop="drop(event, 'zoneRauanna')">
+                    <h4>👸 Её Хотелки</h4>
+                </div>
+                <div class="drop-zone" id="zoneSultan" ondragover="allowDrop(event)" ondrop="drop(event, 'zoneSultan')">
+                    <h4>🤴 Мои Хотелки</h4>
+                </div>
             </div>
 
-            <div class="game-board">
-                <button class="zone-btn" onclick="assignDream('Рауанна')">Её Хотелка 👸</button>
-                <button class="zone-btn" onclick="assignDream('Султан')">Моя Хотелка 🤴</button>
+            <div style="font-size:11px; color:#777; margin-top:10px;">Доступные карточки мечты:</div>
+            <div class="pool-zone" id="poolZone" ondragover="allowDrop(event)" ondrop="drop(event, 'poolZone')">
+                <!-- Карточки рендерятся динамически -->
             </div>
-            
-            <div class="reward-badge" id="reward9">🏆 Все 52 мечты распределены! Возьми сладкий бонус!</div>
+
+            <div class="reward-badge" id="reward9">🏆 Все карточки распределены! Сладкий бонус наш!</div>
             <button class="btn-main" id="toSpaBtn" style="display:none; margin-top:15px;" onclick="goToScreen(10)">Перейти к СПА 💆‍♀️</button>
         </div>
 
@@ -434,12 +452,12 @@
             document.getElementById('carIcon').style.left = (percent - 8) + '%';
 
             if (parseInt(num) === 6) startTimer();
-            if (parseInt(num) === 9) renderDreamCard();
+            if (parseInt(num) === 9) initDreamsGame();
         }
 
         function jumpToStage(num) { goToScreen(num); }
 
-        // 1. Игра с номерами (50 000)
+        // 1. Номера
         let score = 0;
         const targetScore = 50000;
         const usedNumbers = new Set();
@@ -522,7 +540,7 @@
             }
         }
 
-        // 3. Викторина с 13 вопросами
+        // 3. Викторина
         const questions = [
             { q: "Кто из нас первым признался в чувствах?", opts: ["Султан 🤴", "Рауанна 👸", "Мы одновременно!"], ans: 0 },
             { q: "Наше главное правило во время разлуки?", opts: ["Всегда быть на связи и делиться всем 📲", "Никогда не грустить 😃", "Созваниваться строго раз в неделю ⏰"], ans: 0 },
@@ -574,7 +592,7 @@
         }
         renderQuiz();
 
-        // 4. Дорожная рулетка
+        // 4. Рулетка
         const roadPrizes = [
             "🥤 Вкусный напиток на остановке",
             "🍫 Любимая шоколадка",
@@ -591,7 +609,7 @@
             }, 1200);
         }
 
-        // 5. Таймер еды
+        // 5. Таймер
         let timerInterval, totalSeconds = 15 * 60;
         function startTimer() {
             const timerEl = document.getElementById('flowerTimer');
@@ -611,7 +629,7 @@
         }
         function skipTimerForTest() { totalSeconds = 2; }
 
-        // 6. Игра с Мечтами
+        // 6. Мечты - Drag & Drop с автопривязкой
         const dreamsList = [
             "Поездка в Великобританию 🇬🇧", "Массаж всего тела 💆‍♀️", "Отдых на Балхаше 🌊", "Крепкие обнимашки 🧸",
             "Завтрак в постель 🥞", "Сходить в кино на романтику 🍿", "Купить красивое платье 👗", "Прогулка под луной 🌙",
@@ -621,7 +639,7 @@
             "День без будильников ⏰", "Катание на колесе обозрения 🎡", "Милый мягкий мишка 🧸", "Поход в аквапарк 🏊‍♀️",
             "Завтрак с круассанами 🥐", "Вечер настолок 🎲", "Шопинг день 🛍️", "Уютный домашний плейлист 🎶",
             "Свечи и релакс ванная 🛁", "Совместная готовка пиццы 🍕", "Поездка на каток ⛸️", "Сходить на концерт 🎤",
-            "Сделать парное тату (или временное) 🎨", "Поездка за город на уикенд 🏕️", "Катание на лошадях 🐎", "Подарочный бокс 🎁",
+            "Сделать парное тату 🎨", "Поездка за город на уикенд 🏕️", "Катание на лошадях 🐎", "Подарочный бокс 🎁",
             "Любимое мороженое 🍦", "Кофе на рассвете ☕", "Медленный танец дома 💃", "Поход в галерею или музей 🖼️",
             "Массаж ног после прогулки 🦶", "Подарить цветы без повода 🌸", "Парные футболки 👕", "Устроить день сладостей 🍫",
             "Катание на лодке или катамаране 🚣", "Вечер с пижамной вечеринкой 🛌", "Общие фотографии на рабочий стол 📱",
@@ -629,29 +647,46 @@
             "Вечная любовь и поддержка 💕"
         ];
 
-        let currentDreamIdx = 0;
+        function initDreamsGame() {
+            const pool = document.getElementById('poolZone');
+            if (pool.children.length > 0) return; // Ужe загружено
 
-        function renderDreamCard() {
-            if (currentDreamIdx < dreamsList.length) {
-                document.getElementById('dreamCounter').innerText = `Карточка ${currentDreamIdx + 1} из ${dreamsList.length}`;
-                document.getElementById('currentDreamCard').innerText = dreamsList[currentDreamIdx];
-            } else {
-                document.getElementById('dreamCounter').innerText = "Готово!";
-                document.getElementById('currentDreamCard').innerText = "Все мечты распределены! 🎉";
+            dreamsList.forEach((dream, idx) => {
+                const card = document.createElement('div');
+                card.className = 'dream-card';
+                card.innerText = dream;
+                card.id = 'dream-' + idx;
+                card.setAttribute('data-id', idx);
+                card.setAttribute('draggable', 'true');
+                card.ondragstart = (e) => e.dataTransfer.setData('text/plain', card.id);
+                pool.appendChild(card);
+            });
+        }
+
+        function allowDrop(e) { e.preventDefault(); }
+
+        function drop(e, targetZoneId) {
+            e.preventDefault();
+            const id = e.dataTransfer.getData('text/plain');
+            const card = document.getElementById(id);
+            if (!card) return;
+
+            const targetZone = document.getElementById(targetZoneId);
+            targetZone.appendChild(card); // Автопривязка: элемент встает аккуратно по списку
+
+            checkDreamsCompletion();
+        }
+
+        function checkDreamsCompletion() {
+            const pool = document.getElementById('poolZone');
+            if (pool.children.length === 0) {
                 document.getElementById('reward9').style.display = 'block';
                 document.getElementById('toSpaBtn').style.display = 'block';
                 triggerConfetti();
             }
         }
 
-        function assignDream(who) {
-            if (currentDreamIdx < dreamsList.length) {
-                currentDreamIdx++;
-                renderDreamCard();
-            }
-        }
-
-        // 7. Финальное письмо
+        // 7. Финал
         function openEnvelope() {
             document.getElementById('envelope').style.display = 'none';
             document.getElementById('letterText').style.display = 'block';
