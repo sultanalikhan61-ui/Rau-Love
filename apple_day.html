@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Day in UK & Almaty 🍏</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 15px;
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+    .back-btn:hover { opacity: 0.8; }
+
+    .story-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .story-card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+      color: var(--accent-color);
+    }
+
+    /* Блок с инструкции по вырезанию яблочного зайчика */
+    .bunny-tutorial-card {
+      background: var(--card-bg);
+      border: 2px dashed var(--accent-color);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .bunny-tutorial-card h3 {
+      font-size: 1.15rem;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .bunny-tutorial-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .bunny-img-container {
+      width: 100%;
+      max-width: 450px;
+      margin: 0 auto 15px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--card-border);
+    }
+
+    .bunny-img-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+
+    .tutorial-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      background: var(--input-bg);
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      border: 1px solid var(--input-border);
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .photo-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-caption {
+      padding: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-hearts" id="bgHearts"></div>
+
+  <div class="main-wrapper">
+    <a href="index.html" class="back-btn" data-tg-notify="Вернулась на главную из Apple Day">← На главную</a>
+
+    <header>
+      <div class="bunny-avatar" style="font-size: 3rem; display: flex; align-items: center; justify-content: center; background: #fff0f3;">🍏</div>
+      <h1>Apple Day in UK</h1>
+      <p>Праздник яблок в Британии и наши родные воспоминания</p>
+    </header>
+
+    <div class="story-card">
+      <h2>🍎 Британия + Алматы</h2>
+      <p>
+        В Соединенном Королевстве <b>21 октября</b> отмечают Apple Day — день урожая и красивых традиций.
+      </p>
+      <p style="margin-top: 10px;">
+        Для нас этот праздник имеет особый смысл: Алматы — родина яблок, где мы познакомились и провели столько незабываемых моментов. Где бы мы ни находились, этот яблочный символ всегда связывает нас вместе! ❤️
+      </p>
+    </div>
+
+    <!-- МИЛЫЙ ТУТОРИАЛ: ЯБЛОЧНЫЙ ЗАЙЧИК -->
+    <div class="bunny-tutorial-card">
+      <h3>🐰 Яблочный зайчик для тебя!</h3>
+      <p>Сделай себе милый перекус к чаю — вырежи ушки зайчика из дольки яблока ✨</p>
+      
+      <div class="bunny-img-container">
+        <!-- Положи картинку или GIF-схему в папку с проектом под именем apple_bunny.jpg -->
+        <img src="src/apple_bunny.jfif" alt="Инструкция: как сделать яблочного зайчика">
+      </div>
+
+      <div class="tutorial-steps">
+        <div>1️⃣ Нарежь яблоко на аккуратные дольки.</div>
+        <div>2️⃣ На кожуре сделай легкий V-образный надрез ножом.</div>
+        <div>3️⃣ Осторожно подрежь кожуру от основания к «ушкам» и сними лишнее.</div>
+        <div>4️⃣ Готово! Твой эстетичный зайчик к чаю готов ☕🍎</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">📸 Галерея воспоминаний</h2>
+    <div class="photo-grid">
+      <div class="photo-card">
+        <img src="src/almaty_1.jpeg" alt="Алматы">
+        <div class="photo-caption">Родной Алматы 🏔️</div>
+      </div>
+      <div class="photo-card">
+        <img src="src/apples_1.jpg" alt="Яблоки">
+        <div class="photo-caption">Апорт & Символ города 🍎</div>
+      </div>
+      <div class="photo-card">
+        <img src="src/almaty_2.jpeg" alt="Прогулка">
+        <div class="photo-caption">Где всё начиналось ✨</div>
+      </div>
+      <div class="photo-card">
+        <img src="src/apples_2.jpg" alt="Apple Day">
+        <div class="photo-caption">Apple Day in UK 🇬🇧</div>
+      </div>
+    </div>
+
+    <div class="message-card" style="margin-top: 24px; text-align: center;">
+      <h3>Cheers to us, mate! 🥂</h3>
+      <p style="font-style: italic; margin-top: 6px;">«Расстояние не имеет значения, когда нас объединяют теплые воспоминания и общие мечты.»</p>
+    </div>
+
+    <footer>Made with ❤️ specially for you</footer>
+  </div>
+
+  <script>
+    const part1 = "8818384063:";
+    const part2 = "AAEEqTup6sgED-gYB_1tm";
+    const part3 = "cQKcXwi-UDE3lQ";
+    const BOT_TOKEN = part1 + part2 + part3;
+    const CHAT_ID = "606061445";
+
+    function sendTelegramNotification(text) {
+      if (localStorage.getItem('is_sultan') === 'true') return;
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=HTML`).catch(() => {});
+    }
+
+    const savedMode = localStorage.getItem('site_color_mode') || 'light';
+    document.documentElement.setAttribute('data-mode', savedMode);
+
+    window.addEventListener('DOMContentLoaded', () => {
+      sendTelegramNotification("🍎 <b>Рауанна зашла на страницу 'Apple Day in UK'!</b>");
+    });
+  </script>
+  <script src="prank.js"></script>
+</body>
+</html>

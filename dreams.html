@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Планы на Зимние Каникулы ❄️</title>
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 15px;
+      color: var(--accent-color, #ff6b81);
+      text-decoration: none;
+      font-weight: bold;
+      transition: opacity 0.2s;
+    }
+
+    .dream-card {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--card-border, #f0f0f0);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--card-shadow, 0 8px 24px rgba(0,0,0,0.05));
+      margin-bottom: 20px;
+    }
+
+    .dream-card h2 {
+      font-size: 1.25rem;
+      color: var(--text-main, #2d3436);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .columns-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .columns-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .column-box {
+      background: var(--input-bg, #f8f9fa);
+      border: 1px solid var(--input-border, #e9ecef);
+      border-radius: 18px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .column-box h4 {
+      font-size: 0.95rem;
+      color: var(--accent-color, #ff6b81);
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .dreams-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      min-height: 40px;
+      flex-grow: 1;
+    }
+
+    .dream-item {
+      background: var(--card-bg, #ffffff);
+      border: 1px solid var(--card-border, #eee);
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+    }
+
+    .dream-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      color: var(--text-main, #2d3436);
+    }
+
+    .dream-item-desc {
+      font-size: 0.8rem;
+      color: var(--subtext-color, #636e72);
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.3;
+    }
+
+    .dream-item button {
+      background: none;
+      border: none;
+      color: #ff4757;
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 2px 6px;
+    }
+
+    .add-dream-box {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px dashed var(--input-border, #ddd);
+    }
+
+    .add-dream-box input,
+    .add-dream-box textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--input-border, #ccc);
+      background: var(--card-bg, #fff);
+      color: var(--text-main, #333);
+      font-size: 0.85rem;
+      outline: none;
+      box-sizing: border-box;
+      font-family: inherit;
+    }
+
+    .add-dream-box textarea {
+      resize: vertical;
+      min-height: 50px;
+    }
+
+    .add-dream-box button {
+      padding: 9px;
+      background: var(--accent-color, #ff6b81);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .add-dream-box button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-hearts" id="bgHearts"></div>
+
+  <div class="main-wrapper">
+    <a href="index.html" class="back-btn" data-tg-notify="Вернулась на главную из Мечты">← На главную</a>
+
+    <header>
+      <div class="bunny-avatar" style="font-size: 3rem; display: flex; align-items: center; justify-content: center; background: #fff0f3;">❄️</div>
+      <h1>Планы на Зимние Каникулы</h1>
+      <p>Наш список идей, поездок и тёплых моментов</p>
+    </header>
+
+    <!-- ЗИМНИЕ КАНИКУЛЫ -->
+    <div class="dream-card">
+      <h2>✨ Что делаем на каникулах ✨</h2>
+      <div class="columns-grid">
+        
+        <!-- СУЛТАН -->
+        <div class="column-box">
+          <h4>Планы Султана 💙</h4>
+          <ul class="dreams-list" id="list-winter-sultan"></ul>
+          <div class="add-dream-box">
+            <input type="text" id="title-winter-sultan" placeholder="Название (например, Поездка в горы)">
+            <textarea id="desc-winter-sultan" placeholder="Описание: что и как хотим сделать..."></textarea>
+            <button onclick="addDream('winter', 'sultan')">+ Добавить план</button>
+          </div>
+        </div>
+
+        <!-- РАУАННА -->
+        <div class="column-box">
+          <h4>Планы Рауанны 💖</h4>
+          <ul class="dreams-list" id="list-winter-rauanna"></ul>
+          <div class="add-dream-box">
+            <input type="text" id="title-winter-rauanna" placeholder="Название (например, Пожарить маршмеллоу)">
+            <textarea id="desc-winter-rauanna" placeholder="Описание: что и как хотим сделать..."></textarea>
+            <button onclick="addDream('winter', 'rauanna')">+ Добавить план</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <footer>Made with ❤️ specially for you</footer>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrPu0bv13jvnju8JJyHkgeRQcf66fDtlk",
+      authDomain: "our-tracker-3cbb5.firebaseapp.com",
+      databaseURL: "https://our-tracker-3cbb5-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "our-tracker-3cbb5",
+      storageBucket: "our-tracker-3cbb5.firebasestorage.app",
+      messagingSenderId: "25579778585",
+      appId: "1:25579778585:web:9672e4b718fc5309bdb088",
+      measurementId: "G-Y2XCFWYJK0"
+    };
+
+    let db = null;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } catch (e) {
+      console.warn("Firebase initialization skipped or failed:", e);
+    }
+
+    const savedMode = localStorage.getItem('site_color_mode') || 'light';
+    document.documentElement.setAttribute('data-mode', savedMode);
+
+    const part1 = "8818384063:";
+    const part2 = "AAEEqTup6sgED-gYB_1tm";
+    const part3 = "cQKcXwi-UDE3lQ";
+    const BOT_TOKEN = part1 + part2 + part3;
+    const CHAT_ID = "606061445";
+
+    function sendTelegramNotification(text) {
+      if (localStorage.getItem('is_sultan') === 'true') return;
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=HTML`).catch(() => {});
+    }
+
+    // Хранилище в LocalStorage для работы без Firebase
+    function getLocalDreams() {
+      return JSON.parse(localStorage.getItem('winter_dreams_data') || '{"winter":{"sultan":{},"rauanna":{}}}');
+    }
+
+    function saveLocalDreams(data) {
+      localStorage.setItem('winter_dreams_data', JSON.stringify(data));
+    }
+
+    function listenDreams() {
+      if (db) {
+        db.ref('dreams').on('value', snapshot => {
+          const data = snapshot.val() || {};
+          if (data.winter) {
+            renderCategory('winter', data.winter);
+          } else {
+            // Если в Firebase пусто — показываем из локального хранилища
+            const localData = getLocalDreams();
+            renderCategory('winter', localData.winter || {});
+          }
+        }, () => {
+          // В случае ошибки подключения
+          const localData = getLocalDreams();
+          renderCategory('winter', localData.winter || {});
+        });
+      } else {
+        const localData = getLocalDreams();
+        renderCategory('winter', localData.winter || {});
+      }
+    }
+
+    function renderCategory(category, catData) {
+      ['sultan', 'rauanna'].forEach(author => {
+        const listEl = document.getElementById(`list-${category}-${author}`);
+        if (!listEl) return;
+        listEl.innerHTML = '';
+        
+        const userDreams = catData[author] || {};
+        const keys = Object.keys(userDreams);
+
+        if (keys.length === 0) {
+          listEl.innerHTML = `<li style="font-size: 0.78rem; color: var(--subtext-color, #999); text-align: center; padding: 12px;">Пока нет планов ✨</li>`;
+          return;
+        }
+
+        keys.forEach(key => {
+          const item = userDreams[key];
+          // Поддержка как нового формата {title, desc}, так и старого (просто строка)
+          const titleText = typeof item === 'object' ? item.title : item;
+          const descText = typeof item === 'object' ? (item.desc || '') : '';
+
+          const li = document.createElement('li');
+          li.className = 'dream-item';
+          
+          let html = `
+            <div class="dream-item-header">
+              <span>${titleText}</span>
+              <button onclick="deleteDream('${category}', '${author}', '${key}')">✕</button>
+            </div>
+          `;
+          
+          if (descText) {
+            html += `<div class="dream-item-desc">${descText}</div>`;
+          }
+
+          li.innerHTML = html;
+          listEl.appendChild(li);
+        });
+      });
+    }
+
+    function addDream(category, author) {
+      const titleEl = document.getElementById(`title-${category}-${author}`);
+      const descEl = document.getElementById(`desc-${category}-${author}`);
+      
+      const title = titleEl.value.trim();
+      const desc = descEl.value.trim();
+
+      if (!title) return;
+
+      const newItem = { title: title, desc: desc, timestamp: Date.now() };
+
+      // 1. Сохранение локально
+      const localData = getLocalDreams();
+      if (!localData.winter) localData.winter = {};
+      if (!localData.winter[author]) localData.winter[author] = {};
+      
+      const localKey = 'local_' + Date.now();
+      localData.winter[author][localKey] = newItem;
+      saveLocalDreams(localData);
+
+      // 2. Отправка в Firebase (если доступна база)
+      if (db) {
+        db.ref(`dreams/${category}/${author}`).push(newItem).catch(() => {});
+      }
+
+      // Обновляем список на экране
+      renderCategory('winter', localData.winter);
+
+      // Уведомление в Telegram
+      const authorName = author === 'sultan' ? 'Султан' : 'Рауанна';
+      let msg = `❄️ <b>${authorName} добавил(а) план на зиму:</b>\n<b>${title}</b>`;
+      if (desc) msg += `\n<i>${desc}</i>`;
+      sendTelegramNotification(msg);
+
+      titleEl.value = '';
+      descEl.value = '';
+    }
+
+    function deleteDream(category, author, key) {
+      // 1. Удаление из Firebase
+      if (db) {
+        db.ref(`dreams/${category}/${author}/${key}`).remove().catch(() => {});
+      }
+
+      // 2. Удаление из LocalStorage
+      const localData = getLocalDreams();
+      if (localData.winter && localData.winter[author]) {
+        delete localData.winter[author][key];
+        saveLocalDreams(localData);
+        renderCategory('winter', localData.winter);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      listenDreams();
+      sendTelegramNotification("❄️ <b>Рауанна зашла на страницу планов на Зимние Каникулы!</b>");
+    });
+  </script>
+  <script src="prank.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            background: #0f0f13; color: #fff; font-family: monospace;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; margin: 0; text-align: center;
+        }
+        .status { font-size: 1.2rem; margin-bottom: 20px; }
+        .on { color: #2ed573; }
+        .off { color: #ff4757; }
+        button {
+            background: #1e1e24; color: #fff; border: 2px solid #555;
+            padding: 15px 30px; font-size: 1.1rem; border-radius: 10px;
+            cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        button:hover { border-color: #fff; }
+        button.active { background: #2ed573; color: #000; border-color: #2ed573; }
+        .hint { font-size: 0.9rem; color: #888; margin-top: 20px; max-width: 300px; }
+    </style>
+</head>
+<body>
+
+    <div class="status">
+        Статус на этом устройстве: <span id="statusText" class="off">ЗАГРУЗКА...</span>
+    </div>
+
+    <button id="toggleBtn" onclick="toggleMode()">Переключить</button>
+    
+    <div class="hint">Эта настройка сохраняется только в браузере этого устройства. На других устройствах она не сработает.</div>
+
+    <script>
+        // Читаем статус из локального кэша
+        let isSultanMode = localStorage.getItem('is_sultan') === 'true';
+        const statusText = document.getElementById('statusText');
+        const btn = document.getElementById('toggleBtn');
+
+        function updateUI() {
+            if (isSultanMode) {
+                statusText.textContent = "ВЫКЛ (Админ-мод)";
+                statusText.className = "on";
+                btn.classList.add('active');
+                btn.textContent = "Включить уведомления";
+            } else {
+                statusText.textContent = "ВКЛ (Режим Рауанны)";
+                statusText.className = "off";
+                btn.classList.remove('active');
+                btn.textContent = "Выключить уведомления";
+            }
+        }
+
+        function toggleMode() {
+            isSultanMode = !isSultanMode;
+            
+            if (isSultanMode) {
+                localStorage.setItem('is_sultan', 'true');
+            } else {
+                localStorage.removeItem('is_sultan');
+            }
+            
+            updateUI();
+        }
+
+        // Инициализация
+        updateUI();
+    </script>
+</body>
+</html>

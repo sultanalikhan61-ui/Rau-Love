@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Жаңа жыл Адвент 🎄</title>
+<link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --gold: #fbbf24;
+    --blue: #38bdf8;
+    --text: #f8fafc;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+  body {
+    background: radial-gradient(circle at top, #1e293b 0%, var(--bg) 100%);
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    min-height: 100vh; padding: 20px 15px 60px;
+  }
+  .wrap { max-width: 700px; margin: 0 auto; }
+  .back { color: var(--gold); text-decoration: none; font-weight: 800; display: inline-block; margin-bottom: 15px; }
+  
+  header { text-align: center; margin-bottom: 30px; }
+  header h1 { font-family: 'Yeseva One', serif; font-size: clamp(2rem, 8vw, 3rem); color: var(--gold); }
+  header p { color: #94a3b8; margin-top: 8px; }
+
+  /* Сетка */
+  .grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  @media (max-width: 500px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; } }
+
+  /* Карточка */
+  .day-card {
+    aspect-ratio: 1 / 1;
+    background: var(--card);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; position: relative; overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+  }
+  .day-card:hover { transform: translateY(-4px); border-color: var(--gold); }
+  .day-card .num { font-size: 1.5rem; font-weight: 900; color: var(--gold); }
+  
+  /* Замок */
+  .day-card.locked { background: #0b1120; cursor: not-allowed; opacity: 0.6; }
+  .day-card.locked::after { content: '🔒'; font-size: 1.5rem; position: absolute; }
+  .day-card.locked .num { display: none; }
+
+  /* Модалка */
+  .modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+    display: none; align-items: center; justify-content: center; z-index: 100; padding: 20px;
+  }
+  .modal.on { display: flex; }
+  
+  .modal-content {
+    background: var(--card); border: 2px solid var(--gold); border-radius: 24px;
+    max-width: 400px; width: 100%; padding: 30px 20px; text-align: center;
+    position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* Стирашка */
+  .scratch-container {
+    position: relative; width: 100%; height: 200px; border-radius: 16px;
+    overflow: hidden; margin-bottom: 20px;
+    background: linear-gradient(135deg, #2d3748, #1a202c);
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .scratch-text {
+    position: absolute; padding: 20px; text-align: center;
+    font-size: 1.1rem; font-weight: 700; color: #fff; pointer-events: none;
+  }
+  .scratch-text .icon { font-size: 3rem; margin-bottom: 10px; display: block; }
+  canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; touch-action: none; cursor: crosshair; }
+
+  .close-btn {
+    background: var(--gold); color: #000; border: none; padding: 12px 30px;
+    border-radius: 12px; font-weight: 900; font-size: 1rem; cursor: pointer; width: 100%;
+  }
+  .close-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <a href="index.html" class="back">← На главную</a>
+  <header>
+    <h1>Құтты Жаңа жыл!</h1>
+    <p>Твой личный адвент-календарь до 31 декабря 🎄</p>
+  </header>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <div class="scratch-container" id="scratchBox">
+      <div class="scratch-text" id="taskText">
+        <span class="icon" id="taskIcon">🎁</span>
+        <span id="taskDesc">Стирай пальцем...</span>
+      </div>
+      <canvas id="scratchCanvas"></canvas>
+    </div>
+    <button class="close-btn" id="closeBtn" onclick="closeModal()" disabled>Стереть, чтобы закрыть</button>
+  </div>
+</div>
+
+<script>
+  // ЗАДАНИЯ НА КАЖДЫЙ ДЕНЬ (1-31 декабря)
+  // Сделал их интерактивными. Это не просто текст, а действия!
+  const tasks = [
+    { i: "📸", t: "Найди наше самое милое фото и отправь мне его прямо сейчас." }, // 1
+    { i: "☕", t: "Завари себе какао, добавь маршмеллоу и сделай глоток за меня." }, // 2
+    { i: "🎵", t: "Включи песню, которая напоминает тебе обо мне, и напиши какая." }, // 3
+    { i: "✉️", t: "Напиши мне 3 вещи, за которые ты благодарна этому году." }, // 4
+    { i: "🎮", t: "Зайди в наши 'Игры для двоих' и выиграй там что-нибудь!" }, // 5
+    { i: "🧸", t: "Обними свою подушку так крепко, как будто это я. 10 секунд." }, // 6
+    { i: "🍫", t: "Съешь сегодня что-то очень вкусное. Ты заслужила!" }, // 7
+    { i: "👗", t: "Надень сегодня свой самый любимый уютный свитер." }, // 8
+    { i: "✨", t: "Загадай желание. Оно обязательно сбудется!" }, // 9
+    { i: "🎬", t: "Посмотри короткий смешной ролик с котиками и отправь мне его." }, // 10
+    { i: "🕯️", t: "Зажги свечу или включи гирлянду. Просто посиди в тишине 1 минуту." }, // 11
+    { i: "📞", t: "Позвони родителям или близким. Просто чтобы сказать, что любишь." }, // 12
+    { i: "📝", t: "Напиши 5 своих желаний на 2027 год." }, // 13
+    { i: "🌨️", t: "Посмотри в окно. Где бы мы ни были, мы смотрим в одно небо." }, // 14
+    { i: "🍊", t: "Съешь мандаринку. Пахнет Жаңа жылом!" }, // 15
+    { i: "🛁", t: "Сделай себе маленький СПА-ритуал (маску, ванночку для ног)." }, // 16
+    { i: "💌", t: "Перечитай нашу старую переписку. Улыбнись." }, // 17
+    { i: "💤", t: "Ляг спать сегодня на 30 минут раньше. Отдохни как следует." }, // 18
+    { i: "👑", t: "Скажи себе в зеркало: 'Я умница, я красавица, я справлюсь'." }, // 19
+    { i: "🛷", t: "Вспомни, как мы встретимся, и опиши мне нашу встречу." }, // 20
+    { i: "🎨", t: "Секретный квест! Нажми 'Начать рисование' и следуй инструкциям.", type: "link", url: "spin-ny.html" }, // 21
+    { i: "💪", t: "Сделай небольшую зарядку. Разомнись!" }, // 22
+    { i: "🍪", t: "Скушай печеньку. Или две. Я разрешаю." }, // 23
+    { i: "🎁", t: "Сделай себе сегодня маленький подарок (даже если это просто отдых)." }, // 24
+    { i: "🧘‍♀️", t: "Закрой глаза и помечтай о нашем будущем доме." }, // 25
+    { i: "📚", t: "Прочитай несколько страниц любимой книги." }, // 26
+    { i: "🦌", t: "Напиши мне, что ты хочешь найти под елкой." }, // 27
+    { i: "❄️", t: "Поймай снежинку (или представь её) и загадай желание." }, // 28
+    { i: "💖", t: "Просто помни: я очень сильно тебя люблю." }, // 29
+    { i: "🕰️", t: "Напиши мне план на новогоднюю ночь." }, // 30
+    { i: "🎆", t: "С Наступающим, любимая! Я тебя очень жду." } // 31
+  ];
+
+  const grid = document.getElementById('grid');
+  const modal = document.getElementById('modal');
+  const canvas = document.getElementById('scratchCanvas');
+  const ctx = canvas.getContext('2d');
+  const closeBtn = document.getElementById('closeBtn');
+  
+  // Проверка на тестовый режим (?test=1 в ссылке)
+  const isTestMode = window.location.search.includes('test=1');
+  
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const today = now.getDate();
+
+  // Генерация сетки
+  tasks.forEach((task, index) => {
+    const day = index + 1;
+    const el = document.createElement('div');
+    el.className = 'day-card';
+    el.innerHTML = `<div class="num">${day}</div>`;
+
+    // Логика разблокировки: если тестовый режим ИЛИ если декабрь и день наступил ИЛИ январь
+    let isUnlocked = isTestMode || (month === 12 && today >= day) || month === 1;
+    
+    // Проверка, открыт ли уже
+    const isOpened = localStorage.getItem('ny_advent_' + day) === 'true';
+
+    if (!isUnlocked) {
+      el.classList.add('locked');
+    } else {
+      el.onclick = () => openDay(day, task, isOpened);
+    }
+    
+    grid.appendChild(el);
+  });
+
+  // Открытие модалки и инициализация стирашки
+  function openDay(day, task, isOpened) {
+    if (task.type === 'link') {
+        if (confirm("Это откроет страницу рисования. Ты уверена, что готова?")) {
+            window.location.href = task.url;
+        }
+        return;
+    }
+    
+    document.getElementById('taskIcon').innerText = task.i;
+    document.getElementById('taskDesc').innerText = task.t;
+    modal.classList.add('on');
+
+    if (isOpened) {
+      // Если уже открывали — стирашки нет
+      canvas.style.display = 'none';
+      closeBtn.disabled = false;
+      closeBtn.innerText = "Закрыть";
+    } else {
+      // Если открываем впервые — накладываем "снег"
+      canvas.style.display = 'block';
+      closeBtn.disabled = true;
+      closeBtn.innerText = "Сотри снег, чтобы продолжить";
+      
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      
+      // Красивый градиентный "снег"
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      grad.addColorStop(0, '#cbd5e1');
+      grad.addColorStop(1, '#94a3b8');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Текст на снегу
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = 'bold 20px Nunito';
+      ctx.textAlign = 'center';
+      ctx.fillText('СОТРИ ЗДЕСЬ ❄️', canvas.width/2, canvas.height/2);
+
+      setupScratch(day);
+    }
+  }
+
+  // Логика стирания
+  function setupScratch(day) {
+    let isDrawing = false;
+    let scratched = 0;
+    const totalPixels = canvas.width * canvas.height;
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function scratch(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 25, 0, Math.PI * 2);
+      ctx.fill();
+      
+      scratched += Math.PI * 25 * 25;
+      
+      // Если стерли больше 40% площади
+      if (scratched > totalPixels * 0.4) {
+        isDrawing = false;
+        canvas.style.transition = 'opacity 0.5s';
+        canvas.style.opacity = '0';
+        setTimeout(() => { canvas.style.display = 'none'; }, 500);
+        
+        closeBtn.disabled = false;
+        closeBtn.innerText = "Выполнено! ❤️";
+        localStorage.setItem('ny_advent_' + day, 'true');
+        
+        // Помечаем карточку в сетке как открытую
+        const card = grid.children[day - 1];
+        card.style.borderColor = 'var(--gold)';
+        card.style.background = 'linear-gradient(135deg, #1e293b, #0f172a)';
+      }
+    }
+
+    canvas.onpointerdown = (e) => { isDrawing = true; scratch(e); };
+    canvas.onpointermove = scratch;
+    canvas.onpointerup = () => isDrawing = false;
+    canvas.onpointerleave = () => isDrawing = false;
+  }
+
+  function closeModal() {
+    modal.classList.remove('on');
+  }
+</script>
+<script src="prank2.js"></script>
+</body>
+</html>
