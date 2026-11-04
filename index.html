@@ -382,7 +382,7 @@
         .catch(() => {});
     }
 
-    async function getDetailedVisitInfo(actionText = "❤️ Заход на сайт!") {
+    async function getDetailedVisitInfo(actionText = "2222 Заход на сайт!") {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.has('me') || localStorage.getItem('is_sultan') === 'true') return;
 
@@ -468,7 +468,7 @@
       // 1. Отправка в ТГ
       const actionText = target.getAttribute('data-tg-notify');
       if (actionText) {
-        sendTelegramNotification(`🤗 <b>Действие:</b> ${actionText}`);
+        sendTelegramNotification(`22222 <b>Действие:</b> ${actionText}`);
       }
 
       // 2. Запись просмотра в Firebase (ТОЛЬКО ЕСЛИ КЛИКНУЛА РАУАННА)
@@ -497,7 +497,7 @@
       status.style.color = "var(--subtext-color)";
       status.innerText = "Отправляю... ✈️";
 
-      const formattedMessage = `💌 <b>Новая записка с сайта!</b>\n\n${noteText}`;
+      const formattedMessage = `22222 <b>Новая записка с сайта!</b>\n\n${noteText}`;
       
       sendTelegramNotification(formattedMessage);
 
@@ -565,7 +565,7 @@
       
       localStorage.setItem('site_color_mode', newMode);
       applyModeUI(newMode);
-      sendTelegramNotification(`🌓 Переключила режим на: <b>${newMode === 'dark' ? 'Тёмный 🌙' : 'Светлый ☀️'}</b>`);
+      sendTelegramNotification(`22222 Переключила режим на: <b>${newMode === 'dark' ? 'Тёмный 🌙' : 'Светлый ☀️'}</b>`);
     }
 
     function applyModeUI(mode) {
@@ -625,7 +625,7 @@
         isDragging = false;
         speechBubble.style.display = 'none';
         togetherMsg.style.display = 'block';
-        sendTelegramNotification("🎉 Рауанна соединила аватарки на карте!");
+        sendTelegramNotification("22222 Рауанна соединила аватарки на карте!");
       }
     }
     function onEnd() { isDragging = false; }
@@ -706,7 +706,7 @@
           if (isVisited) {
             // Обычная пройденная карточка
             archiveGrid.innerHTML += `
-              <a href="${evt.url}" class="card" target="_blank" data-tg-notify="Открыла архивное событие: ${evt.title}">
+              <a href="${evt.url}" class="card" target="_blank" data-tg-notify="22222 Открыла архивное событие: ${evt.title}">
                 <span class="badge badge-done">Пройдено</span>
                 <div class="icon">${evt.icon}</div>
                 <h3>${evt.title}</h3>
@@ -715,7 +715,7 @@
           } else {
             // Подсвеченная карточка (ПРОПУЩЕНА / НЕ ПРОСМОТРЕНА)
             archiveGrid.innerHTML += `
-              <a href="${evt.url}" class="card unvisited-archive" target="_blank" data-tg-notify="Открыла пропущенное событие: ${evt.title}">
+              <a href="${evt.url}" class="card unvisited-archive" target="_blank" data-tg-notify="22222 Открыла пропущенное событие: ${evt.title}">
                 <span class="badge badge-unread">🔔 Не просмотрено</span>
                 <div class="icon">${evt.icon}</div>
                 <h3>${evt.title}</h3>
@@ -725,7 +725,7 @@
         } else if (diffDays <= TEASE_DAYS) {
           hasActive = true;
           activeGrid.innerHTML += `
-            <a href="${evt.url}" class="card" data-tg-notify="Открыла событие: ${evt.title}">
+            <a href="${evt.url}" class="card" data-tg-notify="22222 Открыла событие: ${evt.title}">
               <span class="badge badge-new">✨ Новое!</span>
               <div class="icon">${evt.icon}</div>
               <h3>${evt.title}</h3>
@@ -833,7 +833,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       initThemeAndMode();
       listenVisitedPages(); // Слушаем Firebase и рисуем события
-      getDetailedVisitInfo("❤️ Рауанна зашла на главную страницу!");
+      getDetailedVisitInfo("22222 Рауанна зашла на главную страницу!");
       
       updateWinterTimer();
       updateTimer();
