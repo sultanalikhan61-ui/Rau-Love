@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Ты прилетела! ✈️</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root { 
+    --bg: #090a0f; 
+    --card: #151a26; 
+    --text: #fff; 
+    --gold: #d4af37; 
+    --blue: #4a90e2;
+    --green: #2ed573;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at top, #1a2235 0%, var(--bg) 100%);
+    color: var(--text); font-family: 'Nunito', sans-serif;
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 20px; overflow: hidden;
+  }
+  
+  .back { position: absolute; top: 20px; left: 20px; color: #a4b0be; text-decoration: none; font-weight: 800; z-index: 10; }
+  
+  /* Стильный посадочный талон */
+  .boarding-pass {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    width: 100%; max-width: 400px;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.2);
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+
+  /* Золотая полоса сверху */
+  .boarding-pass::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px;
+    background: linear-gradient(90deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+  }
+
+  .header {
+    padding: 25px 25px 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 2px dashed rgba(255,255,255,0.1);
+  }
+  .header h2 { font-family: 'Share Tech Mono', monospace; font-size: 1.2rem; color: var(--gold); letter-spacing: 2px; }
+  .header span { font-size: 0.8rem; color: #888; text-transform: uppercase; }
+
+  .flight-info {
+    padding: 20px 25px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .city { text-align: center; }
+  .city h3 { font-family: 'Share Tech Mono', monospace; font-size: 2.5rem; line-height: 1; color: #fff; }
+  .city p { font-size: 0.8rem; color: #888; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+  
+  .plane-icon { font-size: 1.5rem; color: var(--gold); animation: float 3s ease-in-out infinite; }
+  @keyframes float { 50% { transform: translateY(-5px); } }
+
+  /* Таймер */
+  .timer-section {
+    padding: 20px 25px;
+    background: rgba(0,0,0,0.2);
+    text-align: center;
+    border-top: 2px dashed rgba(255,255,255,0.1);
+    border-bottom: 2px dashed rgba(255,255,255,0.1);
+  }
+  .timer-section p { font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .digits { font-family: 'Share Tech Mono', monospace; font-size: 2.5rem; font-weight: bold; display: flex; justify-content: center; gap: 15px; }
+  .digits span { background: #090a0f; padding: 5px 15px; border-radius: 8px; color: #fff; border: 1px solid rgba(255,255,255,0.05); }
+  
+  /* Кнопка */
+  .action-section { padding: 25px; text-align: center; }
+  .btn-land {
+    background: linear-gradient(90deg, var(--gold), #b38728);
+    color: #000; border: none; border-radius: 12px;
+    padding: 15px 30px; width: 100%; font-weight: 900; font-size: 1.1rem;
+    cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .btn-land:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(212,175,55,0.4); }
+  .btn-land:active { transform: scale(0.98); }
+  .btn-land:disabled { background: #333; color: #666; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* Экран приветствия */
+  .welcome-screen {
+    position: fixed; inset: 0; background: var(--bg); z-index: 100;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 30px; text-align: center; opacity: 0; pointer-events: none; transition: opacity 1s;
+  }
+  .welcome-screen.show { opacity: 1; pointer-events: auto; }
+  .welcome-screen h1 { color: var(--gold); font-size: 2.5rem; margin-bottom: 20px; line-height: 1.1; }
+  .welcome-screen p { font-size: 1.1rem; line-height: 1.6; max-width: 400px; color: #ddd; }
+  
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back">← На главную</a>
+
+<div class="boarding-pass" id="boardingPass">
+  <div class="header">
+    <h2>BOARDING PASS</h2>
+    <span>PREMIUM CLASS</span>
+  </div>
+  
+  <div class="flight-info">
+    <div class="city">
+      <h3>LON</h3>
+      <p>Лондон</p>
+    </div>
+    <div class="plane-icon">✈</div>
+    <div class="city">
+      <h3>ALA</h3>
+      <p>Алматы</p>
+    </div>
+  </div>
+
+  <div class="timer-section">
+    <p>До приземления:</p>
+    <div class="digits" id="timer">
+      <span>00</span><span>00</span><span>00</span>
+    </div>
+    <p style="margin-top: 10px; color: #888; font-size: 0.75rem;">РЕЙС SU-2026</p>
+  </div>
+
+  <div class="action-section">
+    <button class="btn-land" id="landBtn" onclick="land()">Симулировать посадку</button>
+  </div>
+</div>
+
+<!-- Экран после нажатия -->
+<div class="welcome-screen" id="welcomeScreen">
+  <div style="font-size: 4rem; margin-bottom: 20px;">🫂</div>
+  <h1>Добро пожаловать домой!</h1>
+  <p>Расстояние — это просто цифры. Я ждал этого момента каждый день. Теперь ты здесь, и я тебя никуда не отпущу. ❤️</p>
+  <button class="btn-land" style="margin-top: 30px; max-width: 300px;" onclick="location.href='index.html'">На главную</button>
+</div>
+
+<script>
+  // Установи здесь точную дату и время прилета (16 декабря 2026)
+  const targetDate = new Date("2026-12-16T16:12:00").getTime();
+
+  function updateTimer() {
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+    
+    if (distance < 0) {
+      document.getElementById('timer').innerHTML = `<span style="color:var(--green)">В АЭРОПОРТУ</span>`;
+      document.getElementById('landBtn').innerText = "Я УЖЕ ЗДЕСЬ!";
+      return;
+    }
+
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    document.getElementById('timer').innerHTML = `
+      <span>${String(days).padStart(2, '0')}д</span>
+      <span>${String(hours).padStart(2, '0')}ч</span>
+      <span>${String(minutes).padStart(2, '0')}м</span>
+    `;
+  }
+  
+  setInterval(updateTimer, 1000);
+  updateTimer();
+
+  function land() {
+    document.getElementById('boardingPass').style.transform = 'scale(0.9)';
+    document.getElementById('boardingPass').style.opacity = '0';
+    
+    setTimeout(() => {
+      document.getElementById('welcomeScreen').classList.add('show');
+      
+      // Эффект золотых частиц
+      for(let i=0; i<50; i++) {
+        let p = document.createElement('div');
+        p.innerText = '✨';
+        p.style.position = 'fixed';
+        p.style.left = '50%'; p.style.top = '50%';
+        p.style.fontSize = (Math.random() * 20 + 10) + 'px';
+        p.style.pointerEvents = 'none';
+        p.style.transition = 'all 1.5s cubic-bezier(0.2, 1, 0.3, 1)';
+        p.style.zIndex = '999';
+        document.body.appendChild(p);
+        
+        setTimeout(() => {
+          p.style.left = (Math.random() * 100) + 'vw';
+          p.style.top = (Math.random() * 100) + 'vh';
+          p.style.opacity = '0';
+          p.style.transform = 'rotate(' + (Math.random() * 360) + 'deg)';
+        }, 50);
+        
+        setTimeout(() => p.remove(), 2000);
+      }
+    }, 400);
+  }
+</script>
+<script src="prank2.js"></script>
+</body>
+</html>

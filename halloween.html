@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spooky Season for Rauanna! 🎃👻</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    html, body {
+      background-color: #0d0914 !important;
+      background-image: radial-gradient(circle at 50% 20%, #1e1333 0%, #0d0914 80%) !important;
+      color: #f1f2f6 !important;
+      font-family: 'Nunito', sans-serif;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+
+    .main-wrapper {
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 20px 15px;
+    }
+
+    .halloween-header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .halloween-header h1 {
+      font-family: 'Creepster', cursive;
+      font-size: 3.5rem;
+      color: #ff793f;
+      text-shadow: 0 0 15px rgba(255, 121, 63, 0.5);
+      margin: 5px 0;
+    }
+
+    .halloween-card {
+      background: rgba(23, 18, 38, 0.95);
+      border: 2px solid #ff793f;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      margin-bottom: 25px;
+      position: relative;
+    }
+
+    .section-title {
+      color: #fffa65;
+      font-size: 1.3rem;
+      margin: 0 0 8px 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: #a4b0be;
+      margin: 0 0 15px 0;
+    }
+
+    /* 🎬 Блок: Подбор ужастика */
+    .movie-card {
+      background: #171126;
+      border: 1px solid #7d5fff;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .movie-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .movie-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #ff793f;
+    }
+
+    .movie-tag {
+      background: rgba(255, 121, 63, 0.2);
+      color: #ff793f;
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .movie-desc {
+      font-size: 0.9rem;
+      color: #dcdde1;
+      line-height: 1.4;
+    }
+
+    .movie-btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .movie-btn {
+      flex: 1;
+      min-width: 130px;
+      background: #251d38;
+      border: 1px solid #3d345a;
+      color: #ffffff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .movie-btn:hover, .movie-btn.selected {
+      background: #ff793f;
+      border-color: #ff793f;
+      color: #000;
+      font-weight: bold;
+    }
+
+    /* 🧪 Блок: Зельеварение */
+    .ingredients-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .ing-btn {
+      background: #191328;
+      border: 1px solid #7d5fff;
+      color: white;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-align: left;
+      transition: all 0.2s;
+    }
+
+    .ing-btn.selected {
+      background: #32ff7e;
+      color: #0d0914;
+      font-weight: bold;
+      border-color: #32ff7e;
+    }
+
+    .cauldron-result {
+      background: #0f0b1a;
+      border: 1px dashed #32ff7e;
+      border-radius: 12px;
+      padding: 15px;
+      color: #32ff7e;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      display: none;
+      margin-top: 15px;
+    }
+
+    /* 🧠 Блок: Викторина */
+    .quiz-question {
+      font-weight: 700;
+      font-size: 1rem;
+      color: #cd84f1;
+      margin-bottom: 10px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .quiz-opt {
+      background: #171126;
+      border: 1px solid #3d345a;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .quiz-opt:hover, .quiz-opt.active {
+      border-color: #cd84f1;
+      background: #281d3d;
+    }
+
+    /* Холст и Кнопки */
+    .spooky-btn {
+      background: linear-gradient(135deg, #ff793f, #e84118);
+      color: white;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 15px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 5px 15px rgba(255, 121, 63, 0.35);
+      transition: all 0.2s;
+    }
+
+    .spooky-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(255, 121, 63, 0.5);
+    }
+
+    .canvas-container {
+      position: relative;
+      margin: 12px 0;
+      width: 100%;
+      background-color: #0a0712;
+      border: 2px solid #7d5fff;
+      border-radius: 15px;
+      touch-action: none;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 200px;
+      border-radius: 15px;
+    }
+
+    .color-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      cursor: pointer;
+    }
+
+    .color-btn.active {
+      transform: scale(1.25);
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .back-btn {
+      color: #ff793f;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-wrapper">
+    <a href="index.html" class="back-btn">← На главную</a>
+
+    <header class="halloween-header">
+      <div style="font-size: 3.5rem;">🎃👻</div>
+      <h1>Spooky Night</h1>
+      <p style="color: #c7acee; margin: 0;">Интерактивный Хеллоуинский Квест для моей Рауанны! ❤️</p>
+    </header>
+
+    <!-- 1. ТАЙНЫЕ ИСТОРИИ И ЗАПИСКИ -->
+    <section class="halloween-card">
+      <div class="section-title">📜 Мои Тайные Записки</div>
+      <div class="section-subtitle">Открой каждый свиток, чтобы прочитать мои мысли:</div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <details style="background: #171126; border: 1px solid #7d5fff; border-radius: 12px; padding: 12px; cursor: pointer;">
+          <summary style="font-weight: bold; color: #fffa65;">🎃 Свиток #1: Почему я так хочу смотреть ужасы с тобой?</summary>
+          <p style="margin-top: 10px; font-size: 0.9rem; color: #dcdde1; line-height: 1.5;">
+            Даже несмотря на 5 000 км между нами, ужастики — это наш идеальный повод включить видеосвязь, приглушить свет и делиться эмоциями! Мне так хочется слышать твою реакцию, подбадривать тебя, когда становится страшно, и быть рядом, пусть пока и через экран! 🎧✨
+          </p>
+        </details>
+
+        <details style="background: #171126; border: 1px solid #7d5fff; border-radius: 12px; padding: 12px; cursor: pointer;">
+          <summary style="font-weight: bold; color: #fffa65;">🕯️ Свиток #2: Самый теплый момент</summary>
+          <p style="margin-top: 10px; font-size: 0.9rem; color: #dcdde1; line-height: 1.5;">
+            Каждый наш созвон и каждый разговор — это главное тепло для меня. Никакое расстояние не способно уменьшить то, как сильно ты мне дорога. Ты делаешь мои дни яркими! 💖
+          </p>
+        </details>
+
+        <details style="background: #171126; border: 1px solid #7d5fff; border-radius: 12px; padding: 12px; cursor: pointer;">
+          <summary style="font-weight: bold; color: #fffa65;">🧪 Свиток #3: Мой главный секрет</summary>
+          <p style="margin-top: 10px; font-size: 0.9rem; color: #dcdde1; line-height: 1.5;">
+            Если ты вдруг устанешь после учебы или станет грустно — просто напиши или набери меня. Я всегда готов выслушать, рассмешить тебя и поднять настроение! 🛡️✨
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- 2. ИНТЕРАКТИВНЫЙ ПОДБОР УЖАСТИКА НА ВЕЧЕР -->
+    <section class="halloween-card" style="border-color: #ff793f;">
+      <div class="section-title">🎬 Выбор Фильма для Нашего Онлайн-Сеанса</div>
+      <div class="section-subtitle">Я очень хочу посмотреть с тобой кино на созвоне! Выбери вариант:</div>
+
+      <div class="movie-card">
+        <div class="movie-header">
+          <span class="movie-title">👻 «Заклятие» / «Астрал»</span>
+          <span class="movie-tag">Классика Ужасов 😱</span>
+        </div>
+        <div class="movie-desc">Атмосферная мистика. Будем смотреть на созвоне, чтобы я поддерживал тебя на страшных моментах!</div>
+        <div class="movie-btn-group">
+          <button class="movie-btn" onclick="selectMovie(this, 'Заклятие / Астрал (Смотрим на созвоне!)')">Я согласна! Смотрим на созвоне 🍿</button>
+          <button class="movie-btn" onclick="selectMovie(this, 'Заклятие (Только если ты на связи весь фильм!)')">Только если ты не отключишься! 📞</button>
+        </div>
+      </div>
+
+      <div class="movie-card">
+        <div class="movie-header">
+          <span class="movie-title">🎃 «Тихое место» / «Птичий короб»</span>
+          <span class="movie-tag">Триллер & Напряжение 🤫</span>
+        </div>
+        <div class="movie-desc">Захватывающий сюжет! Завариваем любимый чай и смотрим вместе онлайн.</div>
+        <div class="movie-btn-group">
+          <button class="movie-btn" onclick="selectMovie(this, 'Тихое место (Завариваем чай и смотрим!)')">Завариваем чай и смотрим! ☕✨</button>
+          <button class="movie-btn" onclick="selectMovie(this, 'Тихое место (Попробуем досмотреть!)')">Попробуем досмотреть до конца 🙈</button>
+        </div>
+      </div>
+
+      <div class="movie-card">
+        <div class="movie-header">
+          <span class="movie-title">🔮 «Кошмар перед Рождеством» / «Труп невесты»</span>
+          <span class="movie-tag">Милая Готика ✨</span>
+        </div>
+        <div class="movie-desc">Эстетичные и сказочные мультфильмы Тима Бёртона. Совсем не страшно, очень уютно!</div>
+        <div class="movie-btn-group">
+          <button class="movie-btn" onclick="selectMovie(this, 'Труп невесты / Кошмар перед Рождеством (Уютный вечер)')">100% Да! Идеальный уют ☕</button>
+        </div>
+      </div>
+
+      <button type="button" class="spooky-btn" onclick="sendMovieChoice()">Утвердить киносеанс! 🎟️</button>
+      <div id="movieStatus" style="font-size: 0.85rem; margin-top: 8px; text-align: center; display: none;"></div>
+    </section>
+
+    <!-- 3. ЛАБОРАТОРИЯ ЗЕЛЬЕВАРЕНИЯ -->
+    <section class="halloween-card" style="border-color: #32ff7e;">
+      <div class="section-title" style="color: #32ff7e;">🧪 Ведьмина Лаборатория Зелий</div>
+      <div class="section-subtitle">Собери свой рецепт зелья (выбери 2 ингредиента):</div>
+
+      <div class="ingredients-grid">
+        <button class="ing-btn" onclick="toggleIng(this, 'Слеза Призрака')">💧 Слеза Призрака</button>
+        <button class="ing-btn" onclick="toggleIng(this, 'Пряная Корица')">🍂 Пряная Корица</button>
+        <button class="ing-btn" onclick="toggleIng(this, 'Звездный Свет')">✨ Звездный Свет</button>
+        <button class="ing-btn" onclick="toggleIng(this, 'Забота Султана')">🛡️ Забота Султана</button>
+      </div>
+
+      <button type="button" class="spooky-btn" style="background: linear-gradient(135deg, #32ff7e, #10ac84); color: #0d0914;" onclick="brewPotion()">
+        Сварить зелье в котле 🥣✨
+      </button>
+
+      <div class="cauldron-result" id="potionResult"></div>
+    </section>
+
+    <!-- 4. ХЕЛЛОУИНСКАЯ ВИКТОРИНА -->
+    <section class="halloween-card" style="border-color: #cd84f1;">
+      <div class="section-title" style="color: #cd84f1;">🧠 Микро-Тест: Наш Уютный Вечер</div>
+      <div class="section-subtitle">Ответь на 2 вопроса:</div>
+
+      <div class="quiz-question">1. Какой напиток заваришь себе перед нашим видеозвонком?</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="selectQuiz(this, 'Q1', 'Горячий чай с лимоном/травами')">☕ Горячий ароматный чай</div>
+        <div class="quiz-opt" onclick="selectQuiz(this, 'Q2_alt', 'Какао или горячий шоколад')">🍫 Уютный какао</div>
+      </div>
+
+      <div class="quiz-question">2. Главное условие нашего киносеанса на расстоянии:</div>
+      <div class="quiz-options">
+        <div class="quiz-opt" onclick="selectQuiz(this, 'Q2', 'Смотрим с видеосвязью!')">📹 Обязательно созваниваемся по видео!</div>
+        <div class="quiz-opt" onclick="selectQuiz(this, 'Q2', 'Ты комментируешь и поддерживаешь!')">🎧 Ты постоянно на связи и подбадриваешь!</div>
+      </div>
+
+      <button type="button" class="spooky-btn" style="background: linear-gradient(135deg, #cd84f1, #7d5fff);" onclick="sendQuizResults()">
+        Отправить ответы Султану 💌
+      </button>
+      <div id="quizStatus" style="font-size: 0.85rem; margin-top: 8px; text-align: center; display: none;"></div>
+    </section>
+
+    <!-- 5. ХОЛСТ РИСОВАНИЯ -->
+    <section class="halloween-card">
+      <div class="section-title">🎨 Нарисуй мне открытку</div>
+      <div class="section-subtitle">Нарисуй или напиши что-нибудь от руки:</div>
+
+      <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 8px;">
+        <div class="color-btn active" style="background: #32ff7e;" onclick="setColor('#32ff7e', this)"></div>
+        <div class="color-btn" style="background: #ff793f;" onclick="setColor('#ff793f', this)"></div>
+        <div class="color-btn" style="background: #cd84f1;" onclick="setColor('#cd84f1', this)"></div>
+        <div class="color-btn" style="background: #fffa65;" onclick="setColor('#fffa65', this)"></div>
+        <button type="button" style="background: #171126; border: 1px solid #7d5fff; color: white; border-radius: 8px; padding: 2px 10px; cursor: pointer;" onclick="clearCanvas()">🗑️ Сбросить</button>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="spookyCanvas"></canvas>
+      </div>
+
+      <button type="button" class="spooky-btn" onclick="sendSpookyDoodle()">Отправить рисунок Султану ✨</button>
+      <div id="canvasStatus" style="font-size: 0.85rem; margin-top: 8px; text-align: center; display: none;"></div>
+    </section>
+
+    <footer style="text-align: center; color: #7d5fff; font-size: 0.85rem; padding: 10px 0;">
+      Happy Halloween! Made with ❤️ by Sultan for Rauanna
+    </footer>
+  </div>
+
+  <script>
+    const part1 = "8818384063:";
+    const part2 = "AAEEqTup6sgED-gYB_1tm";
+    const part3 = "cQKcXwi-UDE3lQ";
+    const BOT_TOKEN = part1 + part2 + part3;
+    const CHAT_ID = "606061445";
+
+    function sendTelegram(text) {
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=HTML`).catch(()=>{});
+    }
+
+    /* 🎬 Подбор фильма */
+    let selectedMovieOption = "";
+    function selectMovie(btn, option) {
+      document.querySelectorAll('.movie-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedMovieOption = option;
+    }
+
+    function sendMovieChoice() {
+      const status = document.getElementById("movieStatus");
+      if (!selectedMovieOption) {
+        status.style.display = "block";
+        status.style.color = "#ff793f";
+        status.innerText = "Выбери хотя бы один фильм! 🍿";
+        return;
+      }
+      status.style.display = "block";
+      status.style.color = "#32ff7e";
+      status.innerText = "Отправлено Султану! Готовимся к видеозвонку! 🎬✨";
+      sendTelegram(`🎬 <b>Выбор фильма на Хеллоуин от Рауанны:</b>\n\n${selectedMovieOption}`);
+    }
+
+    /* 🧪 Варение Зелий */
+    let selectedIngs = [];
+    function toggleIng(btn, name) {
+      if (selectedIngs.includes(name)) {
+        selectedIngs = selectedIngs.filter(i => i !== name);
+        btn.classList.remove('selected');
+      } else {
+        if (selectedIngs.length >= 2) return;
+        selectedIngs.push(name);
+        btn.classList.add('selected');
+      }
+    }
+
+    function brewPotion() {
+      const res = document.getElementById("potionResult");
+      if (selectedIngs.length < 2) {
+        res.style.display = "block";
+        res.innerText = "Выбери ровно 2 ингредиента для котла! 🥣";
+        return;
+      }
+      
+      const potionText = `✨ <b>Зелье Сварено!</b>\nИнгредиенты: ${selectedIngs.join(" + ")}\n\n<b>Эффект зелья:</b> Дарует 100% уютный вечер на видеосвязи, долгий душевный разговор с Султаном и исполнение одного любого желания! ❤️️`;
+      res.style.display = "block";
+      res.innerHTML = potionText;
+
+      sendTelegram(`🧪 <b>Рауанна сварила зелье в котле!</b>\nСостав: ${selectedIngs.join(" + ")}`);
+    }
+
+    /* 🧠 Викторина */
+    let quizAnswers = {};
+    function selectQuiz(btn, q, val) {
+      btn.parentElement.querySelectorAll('.quiz-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      quizAnswers[q] = val;
+    }
+
+    function sendQuizResults() {
+      const status = document.getElementById("quizStatus");
+      if (!quizAnswers['Q1'] && !quizAnswers['Q2_alt'] || !quizAnswers['Q2']) {
+        status.style.display = "block";
+        status.style.color = "#ff793f";
+        status.innerText = "Ответь на оба вопроса! 🧠";
+        return;
+      }
+      status.style.display = "block";
+      status.style.color = "#32ff7e";
+      status.innerText = "Результаты отправлены Султану! 💖";
+
+      const choice1 = quizAnswers['Q1'] || quizAnswers['Q2_alt'];
+      sendTelegram(`🧠 <b>Ответы Рауанны на Хеллоуинский тест:</b>\n\n1. Напиток: ${choice1}\n2. Киносеанс: ${quizAnswers['Q2']}`);
+    }
+
+    /* 🎨 Холст */
+    const canvas = document.getElementById('spookyCanvas');
+    const ctx = canvas.getContext('2d');
+    let isDrawing = false;
+    let strokeColor = '#32ff7e';
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = strokeColor;
+    }
+
+    function setColor(color, btn) {
+      strokeColor = color;
+      ctx.strokeStyle = strokeColor;
+      document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function startDrawing(e) { isDrawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); }
+    function draw(e) { if (!isDrawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); }
+    function stopDrawing() { isDrawing = false; }
+
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('touchstart', startDrawing, { passive: true });
+    canvas.addEventListener('touchmove', draw, { passive: true });
+    canvas.addEventListener('touchend', stopDrawing);
+
+    function sendSpookyDoodle() {
+      const status = document.getElementById("canvasStatus");
+      const pixelBuffer = new Uint32Array(ctx.getImageData(0, 0, canvas.width, canvas.height).data.buffer);
+      if (!pixelBuffer.some(color => color !== 0)) {
+        status.style.display = "block";
+        status.style.color = "#ff793f";
+        status.innerText = "Нарисуй что-нибудь сначала! 🎨";
+        return;
+      }
+
+      status.style.display = "block";
+      status.style.color = "#c7acee";
+      status.innerText = "Отправляю рисунок... ✨";
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.fillStyle = '#0a0712';
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.drawImage(canvas, 0, 0);
+
+      tempCanvas.toBlob((blob) => {
+        const formData = new FormData();
+        formData.append("chat_id", CHAT_ID);
+        formData.append("photo", blob, "doodle.jpg");
+        formData.append("caption", "🎨 <b>Рауанна отправила тебе рисунок!</b>");
+
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData })
+        .then(() => {
+          status.style.color = "#32ff7e";
+          status.innerText = "Рисунок успешно доставлен Султану! 💖";
+          clearCanvas();
+        });
+      }, "image/jpeg", 0.7);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      resizeCanvas();
+      sendTelegram("🎃 <b>Рауанна открыла Хеллоуинский Квест!</b>");
+    });
+    window.addEventListener('resize', resizeCanvas);
+  </script>
+<script src="spooky.js"></script>
+<script src="prank.js"></script>
+</body>
+</html>

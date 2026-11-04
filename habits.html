@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Наш Трекер Привычек ✨</title>
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    /* CSS Переменные по умолчанию (Тема Рауанны - Розовая) */
+    :root {
+      --accent-color: #ff6b81;
+      --accent-bg: rgba(255, 107, 129, 0.1);
+      --accent-shadow: rgba(255, 107, 129, 0.3);
+      --page-bg: #fff0f3;
+    }
+
+    /* Синяя тема для Султана */
+    body.theme-sultan {
+      --accent-color: #3742fa;
+      --accent-bg: rgba(55, 66, 250, 0.1);
+      --accent-shadow: rgba(55, 66, 250, 0.3);
+      --page-bg: #eef2ff;
+    }
+
+    body {
+      background-color: var(--page-bg);
+      transition: background-color 0.4s ease;
+    }
+
+    /* Боковые декоративные маскоты для больших экранов */
+    .side-mascot {
+      position: fixed;
+      bottom: 20px;
+      width: 180px;
+      height: auto;
+      pointer-events: none;
+      z-index: 1;
+      filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+      transition: transform 0.3s ease;
+    }
+
+    .side-mascot.left {
+      left: 20px;
+      animation: floatMascotLeft 4s ease-in-out infinite;
+    }
+
+    .side-mascot.right {
+      right: 20px;
+      animation: floatMascotRight 4s ease-in-out infinite 2s;
+    }
+
+    /* Центральный бегущий мишка над переключателем профилей */
+    .center-mascot-wrapper {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: -8px;
+    }
+
+    .center-mascot {
+      width: 110px;
+      height: auto;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.12));
+      animation: bounceCenter 2.5s ease-in-out infinite;
+    }
+
+    @keyframes bounceCenter {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    @keyframes floatMascotLeft {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+
+    @keyframes floatMascotRight {
+      0%, 100% { transform: translateY(0) rotate(2deg); }
+      50% { transform: translateY(-8px) rotate(-1deg); }
+    }
+
+    @media (max-width: 1100px) {
+      .side-mascot {
+        display: none;
+      }
+    }
+
+    /* Аватарки и профиль */
+    .profile-selector {
+      display: flex;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 6px;
+      border-radius: 18px;
+      margin-bottom: 15px;
+      border: 1px solid var(--card-border);
+      gap: 6px;
+    }
+
+    .profile-btn {
+      flex: 1;
+      padding: 10px 14px;
+      border: none;
+      border-radius: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .profile-btn img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .profile-btn.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: 0 4px 12px var(--accent-shadow);
+    }
+
+    /* Баннер-тренер */
+    .hero-banner {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .hero-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--accent-color);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      animation: bounce 3s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    .hero-text h3 {
+      font-size: 1rem;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .hero-text p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Выбор даты */
+    .date-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-bg);
+      padding: 12px 18px;
+      border-radius: 18px;
+      margin-bottom: 12px;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--card-shadow);
+    }
+
+    .date-input-custom {
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Календарная неделя */
+    .week-calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .calendar-day {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .calendar-day:hover {
+      transform: translateY(-2px);
+    }
+
+    .calendar-day.active {
+      border-color: var(--accent-color);
+      background: var(--accent-bg);
+      box-shadow: 0 4px 10px var(--accent-shadow);
+    }
+
+    .cal-dow {
+      font-size: 0.7rem;
+      color: var(--subtext-color);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .cal-num {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .cal-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #dfe4ea;
+    }
+
+    .cal-dot.status-full { background: #2ed573; }
+    .cal-dot.status-partial { background: #ffa502; }
+    .cal-dot.status-empty { background: #ff4757; }
+
+    /* Список привычек */
+    .tracker-card {
+      background: var(--card-bg);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--card-border);
+    }
+
+    .habit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--input-bg);
+      padding: 12px 14px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      border: 1px solid var(--card-border);
+      gap: 10px;
+      transition: all 0.25s ease;
+    }
+
+    .habit-row.completed {
+      background: rgba(46, 213, 115, 0.08);
+      border-color: rgba(46, 213, 115, 0.4);
+    }
+
+    .habit-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .habit-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text-main);
+    }
+
+    .habit-target-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .habit-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .val-input {
+      width: 70px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border: 1px solid var(--input-border);
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+      background: var(--card-bg);
+    }
+
+    .btn-toggle {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .btn-toggle.done {
+      background: #2ed573;
+      color: white;
+      box-shadow: 0 4px 10px rgba(46, 213, 115, 0.3);
+      transform: scale(1.03);
+    }
+
+    .btn-toggle.not-done {
+      background: var(--progress-bg);
+      color: var(--subtext-color);
+    }
+
+    .btn-icon-action {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      opacity: 0.5;
+      font-size: 0.95rem;
+      padding: 4px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-icon-action:hover {
+      opacity: 1;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 11px;
+      border-radius: 14px;
+      border: none;
+      background: var(--accent-color);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+
+    .btn-action.secondary {
+      background: #70a1ff;
+    }
+
+    .archive-section {
+      margin-top: 25px;
+      padding: 15px;
+      background: rgba(0,0,0,0.02);
+      border: 1px dashed var(--card-border);
+      border-radius: 18px;
+    }
+
+    .archive-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--subtext-color);
+      margin-bottom: 10px;
+    }
+
+    .archive-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--card-bg);
+      border-radius: 10px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+
+    .identity-select {
+      font-size: 0.82rem;
+      text-align: right;
+      color: var(--subtext-color);
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-hearts"></div>
+
+  <!-- Картинки персонажей по бокам для ПК-версии -->
+  <img src="src/Fox.png" class="side-mascot left" alt="Fox Mascot">
+  <img src="src/Bear-1.png" class="side-mascot right" alt="Bear Mascot">
+
+  <div class="main-wrapper">
+    <header style="margin-top: 15px;">
+      <a href="index.html" style="text-decoration: none; color: var(--accent-color); font-weight: 700; font-size: 0.9rem;">← На главную</a>
+      <h1 style="margin-top: 8px;">Наш Трекер Привычек ✨</h1>
+    </header>
+
+    <!-- Выбор авторизованного пользователя -->
+    <div class="identity-select">
+      Вы авторизованы как: 
+      <select id="myIdentity" onchange="switchIdentity(this.value)" style="border-radius: 8px; padding: 3px 8px; border: 1px solid var(--input-border); outline: none;">
+        <option value="rauanna">Рауанна</option>
+        <option value="sultan">Султан</option>
+      </select>
+    </div>
+
+    <!-- Бегущий мишка над переключателем профилей (видно и на телефонах) -->
+    <div class="center-mascot-wrapper">
+      <img src="src/Bear-2.png" class="center-mascot" alt="Bear Running">
+    </div>
+
+    <!-- Вкладки профилей -->
+    <div class="profile-selector">
+      <button class="profile-btn active" id="tabRauanna" onclick="switchView('rauanna')">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Rauanna" alt="Рауанна">
+        <span>Рауанна</span>
+      </button>
+      <button class="profile-btn" id="tabSultan" onclick="switchView('sultan')">
+        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Sultan" alt="Султан">
+        <span>Султан</span>
+      </button>
+    </div>
+
+    <!-- Персонаж-тренер -->
+    <div class="hero-banner">
+      <img src="https://images.unsplash.com/photo-1552053831-71594a27632d?w=150&auto=format&fit=crop&q=80" class="hero-avatar" alt="Мотиватор" id="heroImg">
+      <div class="hero-text">
+        <h3 id="heroTitle">Ничего не откладывай! 🦊💪</h3>
+        <p id="heroSubtitle">Каждый шаг приближает к цели. Выполняй привычки ежедневно!</p>
+      </div>
+    </div>
+
+    <!-- Выбор даты и прогресс -->
+    <div class="date-bar">
+      <div>
+        <span style="font-size: 0.75rem; color: var(--subtext-color); display: block; font-weight: 600;">Дата просмотра:</span>
+        <input type="date" id="selectedDate" class="date-input-custom" onchange="onDateInputChange()">
+      </div>
+      <div style="text-align: right;">
+        <span style="font-size: 0.75rem; color: var(--subtext-color); display: block; font-weight: 600;">Прогресс:</span>
+        <span style="font-weight: 800; color: var(--accent-color); font-size: 1.05rem;" id="progressSummary">0/0 выполнено</span>
+      </div>
+    </div>
+
+    <!-- Календарь текущей недели -->
+    <div class="week-calendar" id="weekCalendarContainer"></div>
+
+    <!-- Быстрые действия -->
+    <div class="action-bar" id="editableActions">
+      <button class="btn-action" onclick="toggleSelectAll()">✅ Отметить / Снять всё</button>
+      <button class="btn-action secondary" onclick="addNewHabit()">+ Новая привычка</button>
+    </div>
+
+    <!-- Список привычек -->
+    <div class="tracker-card">
+      <div id="habitsContainer">Загрузка данных...</div>
+    </div>
+
+    <!-- Архив для восстановления -->
+    <div class="archive-section" id="archiveSection" style="display: none;">
+      <div class="archive-title">📦 Архив привычек (кликните, чтобы вернуть)</div>
+      <div id="archivedHabitsContainer"></div>
+    </div>
+
+    <footer>Made with ❤️ specially for you</footer>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrPu0bv13jvnju8JJyHkgeRQcf66fDtlk",
+      authDomain: "our-tracker-3cbb5.firebaseapp.com",
+      databaseURL: "https://our-tracker-3cbb5-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "our-tracker-3cbb5",
+      storageBucket: "our-tracker-3cbb5.firebasestorage.app",
+      messagingSenderId: "25579778585",
+      appId: "1:25579778585:web:9672e4b718fc5309bdb088",
+      measurementId: "G-Y2XCFWYJK0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // По умолчанию выбран профиль и авторизация Рауанны
+    let viewUser = 'rauanna';
+    let myIdentity = localStorage.getItem('rau_identity') || 'rauanna';
+
+    const defaultHabits = [
+      { id: 'steps', icon: '👟', title: 'Шаги', unit: 'шагов', target: 7000, archived: false },
+      { id: 'water', icon: '💧', title: 'Вода', unit: 'л', target: 2.0, archived: false },
+      { id: 'reading', icon: '📖', title: 'Чтение', unit: 'стр', target: 15, archived: false },
+      { id: 'sport', icon: '🏋️‍♂️', title: 'Спорт 30 мин', unit: '', target: 1, archived: false }
+    ];
+
+    document.getElementById('myIdentity').value = myIdentity;
+
+    function formatDateKey(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function getTodayKey() {
+      return formatDateKey(new Date());
+    }
+
+    document.getElementById('selectedDate').value = getTodayKey();
+
+    function applyTheme(user) {
+      if (user === 'sultan') {
+        document.body.classList.add('theme-sultan');
+      } else {
+        document.body.classList.remove('theme-sultan');
+      }
+    }
+
+    function switchIdentity(val) {
+      myIdentity = val;
+      localStorage.setItem('rau_identity', val);
+      updateUI();
+      listenData();
+    }
+
+    function switchView(user) {
+      viewUser = user;
+      document.getElementById('tabSultan').classList.toggle('active', user === 'sultan');
+      document.getElementById('tabRauanna').classList.toggle('active', user === 'rauanna');
+      
+      applyTheme(user);
+      updateUI();
+      listenData();
+    }
+
+    function updateUI() {
+      const canEdit = (viewUser === myIdentity);
+      document.getElementById('editableActions').style.display = canEdit ? 'flex' : 'none';
+    }
+
+    let habitsList = [];
+    let allLogs = {};
+    let currentDayLogs = {};
+    let dbRef = null;
+
+    function listenData() {
+      if (dbRef) dbRef.off();
+
+      dbRef = db.ref(`users/${viewUser}`);
+      dbRef.on('value', snapshot => {
+        const data = snapshot.val() || {};
+        
+        if (!data.habits) {
+          if (viewUser === myIdentity) {
+            db.ref(`users/${viewUser}/habits`).set(defaultHabits);
+          }
+          habitsList = defaultHabits;
+        } else {
+          habitsList = data.habits;
+        }
+
+        allLogs = data.logs || {};
+        const dateKey = document.getElementById('selectedDate').value;
+        currentDayLogs = allLogs[dateKey] || {};
+
+        renderWeekCalendar();
+        renderHabits();
+        renderArchive();
+      });
+    }
+
+    function onDateInputChange() {
+      const dateKey = document.getElementById('selectedDate').value;
+      currentDayLogs = allLogs[dateKey] || {};
+      renderWeekCalendar();
+      renderHabits();
+    }
+
+    function renderWeekCalendar() {
+      const container = document.getElementById('weekCalendarContainer');
+      container.innerHTML = '';
+
+      const selectedDateVal = document.getElementById('selectedDate').value;
+      const baseDate = new Date(selectedDateVal + 'T00:00:00');
+      
+      const dayOfWeek = baseDate.getDay();
+      const diffToMon = (dayOfWeek === 0 ? -6 : 1 - dayOfWeek);
+      
+      const mon = new Date(baseDate);
+      mon.setDate(baseDate.getDate() + diffToMon);
+
+      const dNames = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+      const activeHabitsCount = habitsList.filter(h => !h.archived).length;
+
+      for (let i = 0; i < 7; i++) {
+        const cur = new Date(mon);
+        cur.setDate(mon.getDate() + i);
+        const curKey = formatDateKey(cur);
+
+        const dayItem = document.createElement('div');
+        dayItem.className = `calendar-day ${curKey === selectedDateVal ? 'active' : ''}`;
+        dayItem.onclick = () => {
+          document.getElementById('selectedDate').value = curKey;
+          onDateInputChange();
+        };
+
+        const dayLogs = allLogs[curKey] || {};
+        let doneCount = 0;
+        Object.keys(dayLogs).forEach(k => {
+          if (dayLogs[k].completed) doneCount++;
+        });
+
+        let statusClass = '';
+        if (activeHabitsCount > 0) {
+          if (doneCount >= activeHabitsCount) statusClass = 'status-full';
+          else if (doneCount > 0) statusClass = 'status-partial';
+          else if (Object.keys(dayLogs).length > 0) statusClass = 'status-empty';
+        }
+
+        dayItem.innerHTML = `
+          <div class="cal-dow">${dNames[i]}</div>
+          <div class="cal-num">${cur.getDate()}</div>
+          <div class="cal-dot ${statusClass}"></div>
+        `;
+
+        container.appendChild(dayItem);
+      }
+    }
+
+    function renderHabits() {
+      const container = document.getElementById('habitsContainer');
+      container.innerHTML = '';
+
+      const canEdit = (viewUser === myIdentity);
+      const visibleHabits = habitsList.filter(h => !h.archived);
+
+      let completedCount = 0;
+
+      if (visibleHabits.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">Нет активных привычек. Добавьте новую или верните из архива!</div>`;
+        document.getElementById('progressSummary').innerText = `0/0 выполнено`;
+        return;
+      }
+
+      visibleHabits.forEach(h => {
+        const log = currentDayLogs[h.id] || { completed: false, val: '' };
+        if (log.completed) completedCount++;
+
+        const row = document.createElement('div');
+        row.className = `habit-row ${log.completed ? 'completed' : ''}`;
+
+        const hintText = h.unit ? `Цель: ${h.target} ${h.unit}` : 'Цель: выполнить';
+
+        row.innerHTML = `
+          <div class="habit-info">
+            <span style="font-size: 1.5rem;">${h.icon}</span>
+            <div>
+              <div class="habit-title">${h.title}</div>
+              <div class="habit-target-hint">${hintText}</div>
+            </div>
+          </div>
+
+          <div class="habit-controls">
+            ${h.unit ? `
+              <input type="number" step="any" class="val-input" placeholder="${h.target}" 
+                     value="${log.val !== undefined ? log.val : ''}"
+                     ${!canEdit ? 'disabled' : ''} 
+                     onchange="onValChange('${h.id}', this.value)">
+              <span style="font-size:0.8rem; color:var(--text-muted); margin-right:4px;">${h.unit}</span>
+            ` : ''}
+
+            <button class="btn-toggle ${log.completed ? 'done' : 'not-done'}" 
+                    ${!canEdit ? 'disabled' : ''} 
+                    onclick="toggleHabit('${h.id}')">
+              ${log.completed ? '✓' : '○'}
+            </button>
+
+            ${canEdit ? `
+              <button class="btn-icon-action" onclick="editHabit('${h.id}')" title="Редактировать привычку">✏️</button>
+              <button class="btn-icon-action" onclick="archiveHabit('${h.id}')" title="Перенести в архив">📦</button>
+            ` : ''}
+          </div>
+        `;
+
+        container.appendChild(row);
+      });
+
+      document.getElementById('progressSummary').innerText = `${completedCount}/${visibleHabits.length} выполнено`;
+    }
+
+    function renderArchive() {
+      const container = document.getElementById('archivedHabitsContainer');
+      const archiveSection = document.getElementById('archiveSection');
+      container.innerHTML = '';
+
+      const archivedHabits = habitsList.filter(h => h.archived);
+      const canEdit = (viewUser === myIdentity);
+
+      if (archivedHabits.length === 0 || !canEdit) {
+        archiveSection.style.display = 'none';
+        return;
+      }
+
+      archiveSection.style.display = 'block';
+
+      archivedHabits.forEach(h => {
+        const item = document.createElement('div');
+        item.className = 'archive-item';
+        item.innerHTML = `
+          <span>${h.icon} ${h.title} (${h.target} ${h.unit || ''})</span>
+          <button class="btn-action" style="padding: 4px 10px; font-size: 0.75rem; flex: none;" onclick="unarchiveHabit('${h.id}')">Вернуть в активные</button>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function editHabit(id) {
+      if (viewUser !== myIdentity) return;
+      const h = habitsList.find(x => x.id === id);
+      if (!h) return;
+
+      const newTitle = prompt('Название привычки:', h.title);
+      if (!newTitle) return;
+
+      const newIcon = prompt('Эмодзи иконка:', h.icon) || '✨';
+      const newUnit = prompt('Единица измерения (или оставьте пустым):', h.unit || '');
+      const newTargetStr = prompt('Цель по умолчанию:', h.target);
+      const newTarget = parseFloat(newTargetStr) || 1;
+
+      h.title = newTitle;
+      h.icon = newIcon;
+      h.unit = newUnit;
+      h.target = newTarget;
+
+      db.ref(`users/${viewUser}/habits`).set(habitsList);
+    }
+
+    function toggleHabit(id) {
+      if (viewUser !== myIdentity) return;
+      const dateKey = document.getElementById('selectedDate').value;
+      const h = habitsList.find(x => x.id === id);
+      const currentLog = currentDayLogs[id] || {};
+
+      const isNowCompleted = !currentLog.completed;
+      const val = isNowCompleted ? (currentLog.val || h.target) : '';
+
+      db.ref(`users/${viewUser}/logs/${dateKey}/${id}`).set({
+        completed: isNowCompleted,
+        val: isNowCompleted ? val : ''
+      });
+    }
+
+    function onValChange(id, val) {
+      if (viewUser !== myIdentity) return;
+      const dateKey = document.getElementById('selectedDate').value;
+      const numVal = parseFloat(val);
+
+      if (!isNaN(numVal) && numVal > 0) {
+        db.ref(`users/${viewUser}/logs/${dateKey}/${id}`).set({
+          completed: true,
+          val: numVal
+        });
+      } else {
+        db.ref(`users/${viewUser}/logs/${dateKey}/${id}`).set({
+          completed: false,
+          val: ''
+        });
+      }
+    }
+
+    function toggleSelectAll() {
+      if (viewUser !== myIdentity) return;
+      const dateKey = document.getElementById('selectedDate').value;
+      const activeHabits = habitsList.filter(h => !h.archived);
+
+      const allDone = activeHabits.every(h => currentDayLogs[h.id] && currentDayLogs[h.id].completed);
+
+      const newLogs = { ...currentDayLogs };
+      activeHabits.forEach(h => {
+        newLogs[h.id] = {
+          completed: !allDone,
+          val: !allDone ? h.target : ''
+        };
+      });
+
+      db.ref(`users/${viewUser}/logs/${dateKey}`).set(newLogs);
+    }
+
+    function addNewHabit() {
+      if (viewUser !== myIdentity) return;
+      const title = prompt('Название привычки (например: Плавание):');
+      if (!title) return;
+      
+      const icon = prompt('Эмодзи иконка:', '🏊‍♂️') || '✨';
+      const unit = prompt('Единица измерения (например: км, мин, стр) или оставьте пустым:', '');
+      const targetStr = prompt('Цель по умолчанию (например: 30 или 1):', '1');
+      const target = parseFloat(targetStr) || 1;
+
+      const newHabit = {
+        id: 'h_' + Date.now(),
+        icon,
+        title,
+        unit,
+        target,
+        archived: false
+      };
+
+      habitsList.push(newHabit);
+      db.ref(`users/${viewUser}/habits`).set(habitsList);
+    }
+
+    function archiveHabit(id) {
+      if (viewUser !== myIdentity) return;
+      if (!confirm('Перенести эту привычку в архив? Она сохранится в истории и вы сможете вернуть её в любой момент из блока ниже.')) return;
+
+      const habit = habitsList.find(h => h.id === id);
+      if (habit) {
+        habit.archived = true;
+        db.ref(`users/${viewUser}/habits`).set(habitsList);
+      }
+    }
+
+    function unarchiveHabit(id) {
+      if (viewUser !== myIdentity) return;
+      const habit = habitsList.find(h => h.id === id);
+      if (habit) {
+        habit.archived = false;
+        db.ref(`users/${viewUser}/habits`).set(habitsList);
+      }
+    }
+
+    applyTheme(viewUser);
+    updateUI();
+    listenData();
+  </script>
+  <script src="prank.js"></script>
+</body>
+</html>

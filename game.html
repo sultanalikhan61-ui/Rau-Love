@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Огонёк и Капелька — Выбор этапа 🔥💧</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--fire:#ff7a45;--water:#4cc9f0;--pink:#ff6b81;--ink:#f6eef7}
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%;background:#120f1d;color:var(--ink);font-family:Fredoka,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+        .container{max-width:500px;width:100%;text-align:center}
+        h1{font-size:clamp(1.8rem,4vw,2.4rem);margin-bottom:10px;color:var(--pink)}
+        p{color:#d9cce0;margin-bottom:25px;font-size:0.95rem}
+        .stages-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:20px}
+        .stage-btn{background:#1b1530;border:2px solid #5a4585;border-radius:16px;padding:16px;color:#fff;font-family:Fredoka,sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:0.2s;display:flex;justify-content:space-between;align-items:center}
+        .stage-btn:hover{background:#2e2447;border-color:var(--pink);transform:translateY(-2px)}
+        .stage-btn span{font-size:0.85rem;color:#b9a8d6;font-weight:500}
+        a{color:#b9a8d6;text-decoration:none;font-size:0.9rem;display:inline-block;margin-top:10px}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Огонёк и Капелька 🔥💧</h1>
+        <p>Выберите этап путешествия:</p>
+        
+        <div class="stages-grid">
+            <button class="stage-btn" onclick="location.href='game-1.html'">
+                <div>1. Обучение и первые шаги <span>Уровни 1–10</span></div>
+                <span>➔</span>
+            </button>
+            <button class="stage-btn" onclick="location.href='game-2.html'">
+                <div>2. Командная работа <span>Уровни 11–20</span></div>
+                <span>➔</span>
+            </button>
+            <button class="stage-btn" onclick="location.href='game-3.html'">
+                <div>3. Сложные механизмы <span>Уровни 21–25 · телепорты, лифты, рычаги</span></div>
+                <span>➔</span>
+            </button>
+            <button class="stage-btn" disabled style="opacity:.45;cursor:not-allowed">
+                <div>4. Лабиринты судьбы <span>Уровни 31–40 · скоро</span></div>
+                <span>➔</span>
+            </button>
+            <button class="stage-btn" disabled style="opacity:.45;cursor:not-allowed">
+                <div>5. Финальный путь к дому <span>Уровни 41–50 · скоро</span></div>
+                <span>➔</span>
+            </button>
+        </div>
+
+        <a href="Rau-One.html">← Назад в Хаб Игр</a>
+    </div>
+</body>
+</html>
