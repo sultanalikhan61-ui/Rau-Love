@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-full scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy New Year, Рауанна ❤️</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: '#0B132B',
+                        deepNavy: '#1C2541',
+                        goldGlow: '#F39C12',
+                        warmGold: '#F1C40F',
+                    },
+                    fontFamily: {
+                        cinzel: ['Cinzel', 'serif'],
+                        cursive: ['Dancing Script', 'cursive'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0B132B; }
+        ::-webkit-scrollbar-thumb { background: #1C2541; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #F39C12; }
+
+        .glass-panel {
+            background: rgba(11, 19, 43, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(241, 196, 15, 0.2);
+        }
+
+        .polaroid {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .polaroid:hover {
+            transform: scale(1.05) rotate(0deg) translateY(-8px) !important;
+            z-index: 30;
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(243, 156, 18, 0.3);
+        }
+
+        /* Анимация плавного появления при скролле */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Анимация стрелки вниз */
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+        .animate-bounce-slow { animation: bounce-slow 2s infinite; }
+
+        /* Santa Flight Animation */
+        .santa-flying {
+            position: fixed; top: 10vh; left: -300px; width: 250px; z-index: 100;
+            pointer-events: none; transition: transform 8s linear;
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.8));
+        }
+        .santa-fly-anim { animation: flyAcross 8s linear forwards; }
+        @keyframes flyAcross {
+            0% { transform: translateX(0) translateY(0) scale(1); }
+            50% { transform: translateX(60vw) translateY(-10vh) scale(0.8); }
+            100% { transform: translateX(120vw) translateY(5vh) scale(0.5); }
+        }
+        
+        .santa-bubble {
+            position: fixed; top: 6vh; left: -300px; background: white; color: #C0392B;
+            padding: 10px 20px; border-radius: 20px; font-weight: 900; font-size: 1.2rem;
+            z-index: 101; pointer-events: none; opacity: 0;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .bubble-anim { animation: bubbleFloat 8s linear forwards; }
+        @keyframes bubbleFloat {
+            0% { opacity: 0; transform: translateX(0) scale(1); }
+            10% { opacity: 1; transform: translateX(10vw) translateY(-2vh) scale(1); }
+            50% { transform: translateX(60vw) translateY(-12vh) scale(0.8); }
+            100% { opacity: 0; transform: translateX(120vw) translateY(5vh) scale(0.5); }
+        }
+    </style>
+</head>
+<body class="bg-midnight text-slate-100 font-sans min-h-full selection:bg-goldGlow selection:text-midnight relative overflow-x-hidden">
+
+    <!-- Canvas for Snow Effect -->
+    <canvas id="snowCanvas" class="fixed inset-0 pointer-events-none z-30"></canvas>
+
+    <!-- Floating Controls -->
+    <div class="fixed top-5 right-5 z-50 flex items-center gap-3">
+        <button onclick="launchSanta()" class="glass-panel px-4 py-2.5 rounded-full flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-red-400 border border-red-500/30 hover:border-red-500 hover:scale-105 transition duration-300 shadow-lg">
+            <i class="fas fa-deer text-sm"></i> Поймать Санту
+        </button>
+    </div>
+
+    <!-- Santa Image -->
+    <img src="src/santa.png" class="santa-flying" id="santaImg" alt="Santa">
+    <div class="santa-bubble" id="santaBubble">Хо-Хо-Хо! 🎅</div>
+
+    <!-- HERO SECTION (Гифка на всю ширину, высота авто) -->
+    <header class="relative w-full flex flex-col bg-[#050914] overflow-hidden group">
+        
+        <!-- 1. Гифка задает высоту блока, ничего не обрезается -->
+        <img src="src/ny.gif" alt="Cozy Winter Room" class="w-full h-auto block z-0 transition-transform duration-[3s] group-hover:scale-105">
+        
+        <!-- 2. Затемнение (градиент), чтобы текст читался и низ плавно переходил в темный фон -->
+        <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/30 to-midnight z-10 pointer-events-none"></div>
+
+        <!-- 3. Контент поверх гифки -->
+        <div class="absolute inset-0 z-20 flex flex-col items-center justify-start pt-16 md:pt-28 text-center px-4">
+            
+            <span class="text-goldGlow tracking-widest text-xs uppercase font-semibold glass-panel px-5 py-2 rounded-full inline-block mb-4 md:mb-6 border border-goldGlow/30">
+                <i class="fas fa-sparkles text-warmGold mr-1.5"></i> Құтты Жаңа жыл, Рауанна
+            </span>
+            
+            <h1 class="text-4xl md:text-7xl font-cinzel font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-100 to-amber-300 drop-shadow-[0_5px_15px_rgba(0,0,0,0.8)] mb-4 md:mb-6">
+                Happy New Year 2027
+            </h1>
+            
+            <p class="font-cursive text-2xl md:text-4xl text-amber-100 max-w-2xl mx-auto leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] mb-8 md:mb-12">
+                "Каждый момент с тобой — волшебство.<br>Вот наш самый сладкий год."
+            </p>
+
+            <!-- Countdown Timer -->
+            <div class="w-full max-w-2xl mx-auto">
+                <div id="countdown" class="grid grid-cols-4 gap-2 md:gap-4 glass-panel p-3 md:p-4 rounded-2xl shadow-2xl">
+                    <div class="flex flex-col items-center p-2 rounded-lg bg-black/60">
+                        <span id="days" class="text-2xl md:text-5xl font-bold font-cinzel text-warmGold">00</span>
+                        <span class="text-[10px] md:text-xs text-slate-300 uppercase tracking-wider mt-1">Дней</span>
+                    </div>
+                    <div class="flex flex-col items-center p-2 rounded-lg bg-black/60">
+                        <span id="hours" class="text-2xl md:text-5xl font-bold font-cinzel text-warmGold">00</span>
+                        <span class="text-[10px] md:text-xs text-slate-300 uppercase tracking-wider mt-1">Часов</span>
+                    </div>
+                    <div class="flex flex-col items-center p-2 rounded-lg bg-black/60">
+                        <span id="minutes" class="text-2xl md:text-5xl font-bold font-cinzel text-warmGold">00</span>
+                        <span class="text-[10px] md:text-xs text-slate-300 uppercase tracking-wider mt-1">Минут</span>
+                    </div>
+                    <div class="flex flex-col items-center p-2 rounded-lg bg-black/60">
+                        <span id="seconds" class="text-2xl md:text-5xl font-bold font-cinzel text-warmGold">00</span>
+                        <span class="text-[10px] md:text-xs text-slate-300 uppercase tracking-wider mt-1">Секунд</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <div class="relative z-20 bg-midnight min-h-screen">
+        
+        <!-- Gifts Section -->
+        <section class="py-16 px-4 max-w-5xl mx-auto w-full relative reveal">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl md:text-4xl font-cinzel font-semibold text-amber-100 drop-shadow-md">
+                    <i class="fas fa-gift text-goldGlow mr-2"></i> Подарки под ёлкой
+                </h2>
+                <p class="text-sm text-slate-300 mt-2 font-light">Нажми на любой подарок, чтобы открыть сюрприз</p>
+            </div>
+
+            <div class="flex justify-center items-end gap-6 sm:gap-12 mt-12">
+                <!-- Gift 1 -->
+                <div onclick="openGift(1)" class="group cursor-pointer relative transform hover:-translate-y-4 transition duration-300">
+                    <div class="w-20 h-16 sm:w-24 sm:h-20 bg-red-700 rounded-lg shadow-2xl relative border border-red-500/40 flex items-center justify-center">
+                        <div class="absolute inset-y-0 w-4 bg-amber-400"></div><div class="absolute inset-x-0 h-4 bg-amber-400"></div>
+                        <i class="fas fa-gift text-white/80 z-10 text-lg"></i>
+                    </div>
+                </div>
+                <!-- Gift 2 -->
+                <div onclick="openGift(2)" class="group cursor-pointer relative transform hover:-translate-y-4 transition duration-300">
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 bg-amber-600 rounded-lg shadow-2xl relative border border-amber-400/40 flex items-center justify-center">
+                        <div class="absolute inset-y-0 w-5 bg-red-500"></div><div class="absolute inset-x-0 h-5 bg-red-500"></div>
+                        <i class="fas fa-heart text-white/80 z-10 text-xl"></i>
+                    </div>
+                </div>
+                <!-- Gift 3 -->
+                <div onclick="openGift(3)" class="group cursor-pointer relative transform hover:-translate-y-4 transition duration-300">
+                    <div class="w-16 h-20 sm:w-20 sm:h-24 bg-emerald-700 rounded-lg shadow-2xl relative border border-emerald-500/40 flex items-center justify-center">
+                        <div class="absolute inset-y-0 w-3 bg-amber-300"></div><div class="absolute inset-x-0 h-3 bg-amber-300"></div>
+                        <i class="fas fa-star text-white/80 z-10 text-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Link -->
+        <section class="py-12 px-4 max-w-4xl mx-auto text-center w-full reveal">
+            <div class="glass-panel p-10 rounded-3xl border border-goldGlow/30 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-goldGlow/10 to-transparent"></div>
+                <div class="relative z-10">
+                    <h2 class="text-3xl font-cinzel text-amber-100 mb-4">🎨 Квест Рисунков</h2>
+                    <p class="text-base text-slate-300 mb-8 max-w-lg mx-auto">Помнишь про наш секретный квест? Зайди в галерею, чтобы узнать, какие шедевры тебя ждут. (Спойлер: тебе понравится!)</p>
+                    <a href="spin-gallery.html" class="inline-block px-10 py-4 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 text-midnight font-bold uppercase tracking-wider hover:scale-105 hover:shadow-[0_0_20px_rgba(243,156,18,0.5)] transition shadow-lg">
+                        Перейти в Галерею
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Polaroids -->
+        <section class="py-16 px-4 max-w-6xl mx-auto w-full reveal">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-cinzel font-semibold text-amber-100">
+                    <i class="fas fa-camera-retro text-goldGlow mr-2"></i> Наши моменты
+                </h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-4">
+                <div class="polaroid bg-slate-100 text-slate-800 p-4 rounded shadow-2xl transform -rotate-3">
+                    <div class="relative aspect-square overflow-hidden rounded bg-slate-200 mb-3 group">
+                        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?auto=format&fit=crop&w=600&q=80" alt="Winter Walk" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    </div>
+                    <p class="font-cursive text-xl text-center text-slate-700">Зимняя прогулка</p>
+                </div>
+                <div class="polaroid bg-slate-100 text-slate-800 p-4 rounded shadow-2xl transform rotate-2">
+                    <div class="relative aspect-square overflow-hidden rounded bg-slate-200 mb-3 group">
+                        <img src="https://images.unsplash.com/photo-1543589077-47d519964700?auto=format&fit=crop&w=600&q=80" alt="Cozy Nights" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    </div>
+                    <p class="font-cursive text-xl text-center text-slate-700">Уютные вечера</p>
+                </div>
+                <div class="polaroid bg-slate-100 text-slate-800 p-4 rounded shadow-2xl transform -rotate-2">
+                    <div class="relative aspect-square overflow-hidden rounded bg-slate-200 mb-3 group">
+                        <img src="https://images.unsplash.com/photo-1512389142860-9c449e58a543?auto=format&fit=crop&w=600&q=80" alt="Holiday Lights" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    </div>
+                    <p class="font-cursive text-xl text-center text-slate-700">Под огнями</p>
+                </div>
+                <div class="polaroid bg-slate-100 text-slate-800 p-4 rounded shadow-2xl transform rotate-3">
+                    <div class="relative aspect-square overflow-hidden rounded bg-slate-200 mb-3 group">
+                        <img src="https://images.unsplash.com/photo-1482517967863-00e15c93c2e7?auto=format&fit=crop&w=600&q=80" alt="New Year" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    </div>
+                    <p class="font-cursive text-xl text-center text-slate-700">Навсегда</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notes Section -->
+        <section class="py-16 px-4 max-w-4xl mx-auto w-full reveal">
+            <div class="space-y-6">
+                <h3 class="text-3xl font-cinzel font-semibold text-amber-100 text-center mb-8">Новогодние записки</h3>
+                
+                <div onclick="flipWishCard(this)" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-goldGlow transition duration-300 group">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-400"><i class="fas fa-heart text-xl"></i></div>
+                            <h4 class="font-semibold text-lg text-amber-100">Моё обещание на 2027</h4>
+                        </div>
+                        <i class="fas fa-chevron-down text-slate-400 group-hover:text-goldGlow transition"></i>
+                    </div>
+                    <p class="wish-content hidden text-sm text-slate-300 mt-4 pt-4 border-t border-white/10 leading-relaxed">
+                        Обещаю любить тебя с каждым днем все сильнее, делать так, чтобы ты улыбалась, когда грустно, и строить наше будущее. Где бы мы ни были.
+                    </p>
+                </div>
+
+                <div onclick="flipWishCard(this)" class="glass-card p-6 rounded-2xl cursor-pointer hover:border-goldGlow transition duration-300 group">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-400"><i class="fas fa-snowflake text-xl"></i></div>
+                            <h4 class="font-semibold text-lg text-amber-100">Любимое воспоминание</h4>
+                        </div>
+                        <i class="fas fa-chevron-down text-slate-400 group-hover:text-goldGlow transition"></i>
+                    </div>
+                    <p class="wish-content hidden text-sm text-slate-300 mt-4 pt-4 border-t border-white/10 leading-relaxed">
+                        Оглядываясь на этот год, мои любимые дни — это просто моменты с тобой. Пить кофе, смеяться и держать тебя за руку, зная, что впереди у нас целая жизнь.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="py-8 text-center text-xs text-slate-400 border-t border-white/5 bg-black/50">
+            <p class="font-cursive text-xl text-amber-200">Создано с любовью, специально для тебя ❤️</p>
+        </footer>
+    </div>
+
+    <!-- Gift Modal -->
+    <div id="giftModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition duration-300 px-4">
+        <div class="glass-panel p-10 rounded-3xl max-w-md w-full border border-goldGlow/40 text-center relative transform scale-90 transition duration-300" id="modalCard">
+            <button onclick="closeGiftModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl"><i class="fas fa-times"></i></button>
+            <div class="w-20 h-20 rounded-full bg-goldGlow/20 text-goldGlow flex items-center justify-center mx-auto mb-6 text-3xl shadow-[0_0_30px_rgba(243,156,18,0.3)] border border-goldGlow/40">
+                <i id="giftModalIcon" class="fas fa-gift"></i>
+            </div>
+            <h3 id="giftModalTitle" class="text-2xl font-cinzel font-bold text-amber-100 mb-3">Подарок открыт!</h3>
+            <p id="giftModalText" class="text-base text-slate-200 leading-relaxed mb-8"></p>
+            <button onclick="closeGiftModal()" class="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-midnight font-bold tracking-wider uppercase hover:scale-105 transition shadow-lg">Забрать в сердечко</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Snow Canvas ---
+        const snowCanvas = document.getElementById('snowCanvas');
+        const snowCtx = snowCanvas.getContext('2d');
+        let width = snowCanvas.width = window.innerWidth;
+        let height = snowCanvas.height = window.innerHeight;
+        window.addEventListener('resize', () => {
+            width = snowCanvas.width = window.innerWidth;
+            height = snowCanvas.height = window.innerHeight;
+        });
+        const flakes = [];
+        for (let i = 0; i < 100; i++) {
+            flakes.push({
+                x: Math.random() * width, y: Math.random() * height,
+                radius: Math.random() * 3 + 1, opacity: Math.random() * 0.7 + 0.3,
+                speedY: Math.random() * 1.5 + 0.5, speedX: Math.random() * 1 - 0.5
+            });
+        }
+        function drawSnow() {
+            snowCtx.clearRect(0, 0, width, height);
+            for (let i = 0; i < 100; i++) {
+                const f = flakes[i];
+                snowCtx.beginPath(); snowCtx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+                snowCtx.fillStyle = `rgba(255, 255, 255, ${f.opacity})`; snowCtx.fill();
+                f.y += f.speedY; f.x += f.speedX;
+                if (f.y > height) { f.y = -10; f.x = Math.random() * width; }
+            }
+            requestAnimationFrame(drawSnow);
+        }
+        drawSnow();
+
+        // --- Scroll Reveal (Анимация появления) ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- Countdown ---
+        function updateCountdown() {
+            const nextYearTime = new Date(`January 1, 2027 00:00:00`).getTime();
+            const diff = nextYearTime - new Date().getTime();
+            if (diff < 0) return;
+            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
+            document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            document.getElementById('minutes').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            document.getElementById('seconds').innerText = Math.floor((diff % (1000 * 60)) / 1000);
+        }
+        setInterval(updateCountdown, 1000); updateCountdown();
+
+        // --- Audio API ---
+        let audioCtx = null;
+        function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+        
+        function playChimeSound() {
+            initAudio(); if (!audioCtx) return;
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(1050, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+            osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+        }
+
+        function playHoHoHo() {
+            initAudio(); if (!audioCtx) return;
+            const notes = [150, 130, 110];
+            notes.forEach((freq, i) => {
+                setTimeout(() => {
+                    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+                }, i * 400);
+            });
+        }
+
+        // --- Santa Logic ---
+        let isSantaFlying = false;
+        function launchSanta() {
+            if (isSantaFlying) return;
+            isSantaFlying = true;
+            
+            const santa = document.getElementById('santaImg');
+            const bubble = document.getElementById('santaBubble');
+            
+            santa.classList.remove('santa-fly-anim');
+            bubble.classList.remove('bubble-anim');
+            void santa.offsetWidth;
+            
+            santa.classList.add('santa-fly-anim');
+            bubble.classList.add('bubble-anim');
+            
+            setTimeout(() => { playHoHoHo(); }, 2000);
+            setTimeout(() => { isSantaFlying = false; }, 8000);
+        }
+
+        // --- Gifts ---
+        const giftSurprises = {
+            1: { title: "Купон: Бесконечные объятия 🤗", text: "Можно использовать в любое время и в любом месте! Действует 365 дней в году.", icon: "fa-heart" },
+            2: { title: "Романтический ужин 🍷", text: "Ты выиграла свидание при свечах, полностью организованное мной! Готовься к сюрпризам.", icon: "fa-glass-cheers" },
+            3: { title: "Секретная записка 💌", text: "Ты — самый яркий свет в моей жизни. Спасибо за то, что каждый обычный день делаешь волшебным. С Новым Годом!", icon: "fa-envelope-open-text" }
+        };
+        function openGift(id) {
+            playChimeSound();
+            document.getElementById('giftModalTitle').innerText = giftSurprises[id].title;
+            document.getElementById('giftModalText').innerText = giftSurprises[id].text;
+            document.getElementById('giftModalIcon').className = `fas ${giftSurprises[id].icon}`;
+            document.getElementById('giftModal').classList.remove('opacity-0', 'pointer-events-none');
+            document.getElementById('modalCard').classList.remove('scale-90');
+            document.getElementById('modalCard').classList.add('scale-100');
+        }
+        function closeGiftModal() {
+            document.getElementById('giftModal').classList.add('opacity-0', 'pointer-events-none');
+            document.getElementById('modalCard').classList.remove('scale-100');
+            document.getElementById('modalCard').classList.add('scale-90');
+        }
+
+        // --- Wish Cards ---
+        function flipWishCard(card) {
+            const content = card.querySelector('.wish-content');
+            const icon = card.querySelector('.fa-chevron-down');
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+                playChimeSound();
+            } else {
+                content.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+    </script>
+    <script src="prank2.js"></script>
+</body>
+</html>
